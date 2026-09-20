@@ -1,0 +1,420 @@
+<meta charset="utf-8">
+<title>打者眼中的球场</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400&display=swap">
+
+<style>
+:root{
+  --bg:#F3F4EE; --bg2:#E8EBE1; --card:#FFFFFF;
+  --ink:#1A2119; --ink2:#4B564A; --ink3:#7A8477; --line:#CBD1C1;
+  --turf-deep:#1F5E36; --clay:#B4573C;
+  --fd:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  --fb:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  font-size:clamp(13px, 0.52vw + 0.78vh, 19px);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2.5px solid var(--clay);outline-offset:2px}
+
+#page{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%}
+
+/* 顶栏 */
+header{
+  display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap;
+  padding:1.1rem 2.2rem;border-bottom:1px solid var(--line);background:var(--card)
+}
+.brand{display:grid;gap:.15rem;margin-right:auto}
+.brand b{font-family:var(--fd);font-weight:900;font-size:1.3rem;letter-spacing:-.01em}
+.brand small{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--clay)}
+.layers{display:flex;gap:.5rem;flex-wrap:wrap}
+.tg{
+  font-family:var(--fd);font-size:.76rem;font-weight:700;letter-spacing:.05em;
+  background:var(--card);color:var(--ink2);border:1px solid var(--line);
+  padding:.4rem .85rem;border-radius:2px;cursor:pointer;white-space:nowrap;
+  transition:color .15s,border-color .15s,background .15s
+}
+.tg:hover{color:var(--ink);border-color:var(--ink3)}
+.tg[aria-pressed="true"]{background:var(--turf-deep);color:#FFFFFF;border-color:var(--turf-deep)}
+
+/* 主体 */
+main{display:grid;grid-template-columns:minmax(0,1fr) 25rem;min-height:0}
+#stage{position:relative;min-height:0;padding:1rem 1.4rem 1.4rem;display:grid;place-items:center}
+svg#field{width:auto;height:100%;max-width:100%;max-height:100%;display:block}
+
+aside{
+  border-left:1px solid var(--line);padding:1.6rem 1.6rem 2rem;overflow:auto;
+  display:grid;gap:1.1rem;align-content:start;background:var(--bg2)
+}
+.tagline{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--clay)}
+aside h2{font-family:var(--fd);font-weight:900;font-size:1.72rem;margin:0;line-height:1.15;letter-spacing:-.015em}
+aside h2 em{font-style:normal;color:var(--turf-deep)}
+.meta{display:flex;gap:.5rem;flex-wrap:wrap}
+.pill{
+  font-family:var(--fd);font-size:.72rem;font-weight:700;letter-spacing:.06em;
+  border:1px solid var(--line);color:var(--ink2);background:var(--card);
+  padding:.2rem .6rem;border-radius:99px
+}
+aside p{margin:0;font-size:1rem;line-height:1.72;color:var(--ink2)}
+aside p.lead{color:var(--ink)}
+.hint{font-family:var(--fd);font-size:.74rem;color:var(--ink3);letter-spacing:.05em;
+  border-top:1px solid var(--line);padding-top:1rem;line-height:1.7}
+
+/* 名册 */
+.roster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.3rem}
+.rb{
+  display:grid;grid-template-columns:1.5rem 1fr;gap:.55rem;align-items:center;
+  font-family:var(--fb);font-size:.9rem;color:var(--ink2);text-align:left;
+  background:transparent;border:1px solid transparent;border-radius:3px;
+  padding:.34rem .45rem;cursor:pointer
+}
+.rb b{font-family:var(--fd);font-weight:900;font-size:.84rem;color:var(--ink3);
+  font-variant-numeric:tabular-nums;text-align:center}
+.rb:hover{border-color:var(--line);color:var(--ink);background:var(--card)}
+.rb[aria-pressed="true"]{border-color:var(--turf-deep);color:var(--ink);background:var(--card)}
+.rb[aria-pressed="true"] b{color:var(--turf-deep)}
+
+/* SVG 文字：白色描边保证压在草地和土上都清楚 */
+.tx,.tn{font-family:var(--fb);paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+.tx{font-weight:700}
+.tn{font-weight:600}
+.tx:not([fill]){fill:var(--ink)}
+.tn:not([fill]){fill:var(--ink2)}
+.tnum{font-family:var(--fd);font-weight:900}
+.pl{cursor:pointer}
+.pl circle.dot{transition:r .18s ease}
+.pl:hover circle.dot{r:21}
+.pl.on circle.dot{r:22}
+.zone{opacity:0;transition:opacity .3s ease;pointer-events:none}
+.zone.on{opacity:1}
+#layerGaps,#layerDims,#layerRun{display:none}
+#layerGaps.on,#layerDims.on,#layerRun.on{display:block}
+
+@media (max-width:1000px){
+  main{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}
+  aside{border-left:0;border-top:1px solid var(--line);max-height:42vh}
+  body{overflow:auto}
+  #page{height:auto;min-height:100%}
+  #stage{min-height:56vh}
+  svg#field{height:auto;width:100%}
+}
+@media (prefers-reduced-motion:reduce){.zone,.pl circle.dot{transition:none}}
+
+.note{display:none;margin:.55rem 0 0;font-size:.85rem;line-height:1.6;color:#B4573C;
+  border-left:3px solid #B4573C;padding-left:.7rem;font-weight:500}
+#page.notes .note{display:block}
+.btn.on,.tg.on{background:#B4573C!important;border-color:#B4573C!important;color:#FFFFFF!important}
+</style>
+
+<div id="page">
+<header>
+  <div class="brand">
+    <small>板块一 · 先看懂</small>
+    <b>打者眼中的球场</b>
+  </div>
+  <div class="layers">
+    <button class="tg" id="tZones" aria-pressed="false">防守责任区</button>
+    <button class="tg" id="tGaps" aria-pressed="false">打击空当</button>
+    <button class="tg" id="tRun" aria-pressed="false">跑垒路线</button>
+    <button class="tg" id="tDims" aria-pressed="false">场地尺寸</button>
+    <button class="tg" id="bNote">讲解提示</button>
+    <button class="tg" id="tClear">回到全景</button>
+  </div>
+</header>
+
+<main>
+  <div id="stage">
+    <svg id="field" viewBox="0 0 1000 880" role="img" aria-label="慢投垒球球场与十人防守站位，本垒在下方">
+      <defs>
+        <marker id="mRun" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="#C2601A"/>
+        </marker>
+        <clipPath id="fair">
+          <path d="M500,780 L24.8,304.8 A672,672 0 0 1 975.2,304.8 Z"/>
+        </clipPath>
+      </defs>
+
+      <rect x="0" y="0" width="1000" height="880" fill="#F3F4EE"/>
+
+      <!-- 界内草地 -->
+      <path d="M500,780 L24.8,304.8 A672,672 0 0 1 975.2,304.8 Z" fill="#6DAA79"/>
+
+      <!-- 内场土 -->
+      <path d="M500,800 L630,668 L500,538 L370,668 Z" fill="#D39A74"/>
+      <circle cx="500" cy="780" r="52" fill="#D39A74"/>
+
+      <!-- 围栏 -->
+      <path d="M24.8,304.8 A672,672 0 0 1 975.2,304.8" fill="none" stroke="#1F5E36" stroke-width="3.5" stroke-dasharray="10 7"/>
+      <text x="500" y="90" class="tn" text-anchor="middle" font-size="17">外场围栏 · 越过就是全垒打</text>
+
+      <!-- 边线 -->
+      <path d="M500,780 L24.8,304.8" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+      <path d="M500,780 L975.2,304.8" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+      <line x1="24.8" y1="304.8" x2="14" y2="266" stroke="#E0B800" stroke-width="6"/>
+      <line x1="975.2" y1="304.8" x2="986" y2="266" stroke="#E0B800" stroke-width="6"/>
+      <text x="150" y="600" class="tn" font-size="18" text-anchor="middle">界外</text>
+      <text x="850" y="600" class="tn" font-size="18" text-anchor="middle">界外</text>
+
+      <!-- 垒线 -->
+      <path d="M500,780 L611.7,668.3 L500,556.6 L388.3,668.3 Z" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+
+      <!-- 图层：尺寸 -->
+      <g id="layerDims">
+        <line x1="500" y1="780" x2="611.7" y2="668.3" stroke="#C2601A" stroke-width="3"/>
+        <text x="588" y="742" class="tx" font-size="17" fill="#C2601A">垒间 19.81 m</text>
+        <line x1="500" y1="780" x2="500" y2="658" stroke="#C2601A" stroke-width="3" stroke-dasharray="6 4"/>
+        <text x="486" y="724" class="tx" font-size="17" fill="#C2601A" text-anchor="end">投球 15.24 m</text>
+        <line x1="500" y1="780" x2="500" y2="112" stroke="#C2601A" stroke-width="1.5" stroke-dasharray="4 8" opacity=".6"/>
+        <text x="514" y="200" class="tx" font-size="17" fill="#C2601A">到围栏 约 84 m</text>
+        <text x="514" y="470" class="tn" font-size="16" fill="#C2601A">浅外场 约 39 m</text>
+      </g>
+
+      <!-- 图层：责任区 -->
+      <g id="layerZones" clip-path="url(#fair)">
+        <circle class="zone" data-zone="1" cx="500" cy="658" r="72" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="2" cx="500" cy="818" r="66" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="3" cx="640" cy="628" r="80" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="4" cx="560" cy="545" r="86" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="5" cx="360" cy="628" r="80" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="6" cx="440" cy="545" r="86" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="7" cx="258" cy="368" r="132" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="8" cx="500" cy="300" r="140" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="9" cx="742" cy="368" r="132" fill="#FFF7A6" fill-opacity=".6"/>
+        <circle class="zone" data-zone="10" cx="530" cy="425" r="112" fill="#FFF7A6" fill-opacity=".6"/>
+      </g>
+
+      <!-- 图层：跑垒路线 -->
+      <g id="layerRun">
+        <g stroke="#C2601A" stroke-width="7" fill="none" stroke-linecap="round" marker-end="url(#mRun)">
+          <line x1="518" y1="762" x2="594" y2="686"/>
+          <line x1="594" y1="650" x2="518" y2="574"/>
+          <line x1="482" y1="574" x2="406" y2="650"/>
+          <line x1="406" y1="686" x2="482" y2="762"/>
+        </g>
+        <g>
+          <circle cx="612" cy="780" r="17" fill="#C2601A"/><text x="612" y="786" class="tnum" font-size="16" text-anchor="middle">1</text>
+          <circle cx="624" cy="556" r="17" fill="#C2601A"/><text x="624" y="562" class="tnum" font-size="16" text-anchor="middle">2</text>
+          <circle cx="376" cy="556" r="17" fill="#C2601A"/><text x="376" y="562" class="tnum" font-size="16" text-anchor="middle">3</text>
+          <circle cx="388" cy="780" r="17" fill="#C2601A"/><text x="388" y="786" class="tnum" font-size="16" text-anchor="middle">4</text>
+        </g>
+        <text x="500" y="166" class="tx" font-size="19" text-anchor="middle" fill="#C2601A">逆时针跑一圈回到本垒，得 1 分</text>
+        <text x="500" y="196" class="tn" font-size="17" text-anchor="middle" fill="#C2601A">不用一口气跑完，可以先停在垒上</text>
+      </g>
+
+      <!-- 图层：空当 -->
+      <g id="layerGaps">
+        <g opacity=".9">
+          <circle cx="400" cy="588" r="32" fill="none" stroke="#A8281F" stroke-width="2.5" stroke-dasharray="5 4"/>
+          <text x="332" y="566" class="tx" font-size="15" fill="#A8281F" text-anchor="end">三游之间</text>
+          <circle cx="600" cy="588" r="32" fill="none" stroke="#A8281F" stroke-width="2.5" stroke-dasharray="5 4"/>
+          <text x="668" y="566" class="tx" font-size="15" fill="#A8281F" text-anchor="start">一二之间</text>
+          <circle cx="358" cy="462" r="54" fill="none" stroke="#A8281F" stroke-width="3" stroke-dasharray="6 5"/>
+          <text x="358" y="459" class="tx" font-size="16" fill="#A8281F" text-anchor="middle">浅外场</text>
+          <text x="358" y="482" class="tn" font-size="14" fill="#A8281F" text-anchor="middle">最好打的一片</text>
+          <circle cx="678" cy="486" r="52" fill="none" stroke="#A8281F" stroke-width="2.5" stroke-dasharray="5 4"/>
+          <text x="678" y="491" class="tx" font-size="15" fill="#A8281F" text-anchor="middle">右侧浅处</text>
+          <circle cx="500" cy="180" r="46" fill="none" stroke="#A8281F" stroke-width="2.5" stroke-dasharray="5 4"/>
+          <text x="500" y="185" class="tx" font-size="15" fill="#A8281F" text-anchor="middle">头顶后方</text>
+        </g>
+      </g>
+
+      <!-- 垒包 -->
+      <rect x="603.7" y="660.3" width="16" height="16" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 611.7 668.3)"/>
+      <rect x="612.7" y="669.3" width="16" height="16" fill="#DE7A26" stroke="#1A2119" stroke-width="1" transform="rotate(45 620.7 677.3)"/>
+      <rect x="492" y="548.6" width="16" height="16" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 500 556.6)"/>
+      <rect x="380.3" y="660.3" width="16" height="16" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 388.3 668.3)"/>
+      <text x="672" y="706" class="tx" font-size="17">一垒</text>
+      <text x="500" y="530" class="tx" font-size="17" text-anchor="middle">二垒</text>
+      <text x="328" y="706" class="tx" font-size="17" text-anchor="end">三垒</text>
+
+      <!-- 投手圈 -->
+      <circle cx="500" cy="658" r="30" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+      <rect x="488" y="655" width="24" height="6" fill="#FFFFFF" stroke="#1A2119" stroke-width=".8"/>
+
+      <!-- 本垒 -->
+      <path d="M489,769 h22 l0,11 l-11,12 l-11,-12 Z" fill="#FFFFFF" stroke="#1A2119" stroke-width="1.2"/>
+      <rect x="454" y="762" width="30" height="46" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+      <rect x="516" y="762" width="30" height="46" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+
+      <!-- 打者 -->
+      <g id="batter">
+        <circle cx="469" cy="785" r="15" fill="#D4E03A" stroke="#1A2119" stroke-width="2"/>
+        <text x="469" y="791" class="tnum" font-size="15" fill="#1A2119" text-anchor="middle">你</text>
+        <text x="432" y="838" class="tx" font-size="16" fill="#B4573C" text-anchor="middle">你站这里</text>
+        <text x="562" y="838" class="tn" font-size="14">左打者站另一边</text>
+      </g>
+
+      <!-- 左右提示 -->
+      <g id="orient">
+        <path d="M640,806 L724,806" stroke="#1F5E36" stroke-width="2.5"/>
+        <path d="M718,800 L728,806 L718,812 Z" fill="#1F5E36"/>
+        <text x="640" y="796" class="tx" font-size="16" fill="#1F5E36">你的右手边 · 一垒方向</text>
+        <path d="M360,806 L276,806" stroke="#1F5E36" stroke-width="2.5"/>
+        <path d="M282,800 L272,806 L282,812 Z" fill="#1F5E36"/>
+        <text x="360" y="796" class="tx" font-size="16" fill="#1F5E36" text-anchor="end">你的左手边 · 三垒方向</text>
+      </g>
+
+      <!-- 防守球员 -->
+      <g id="players"></g>
+    </svg>
+  </div>
+
+  <aside>
+    <div class="tagline" id="aTag">站在本垒，先看清楚</div>
+    <h2 id="aName">面前有<em>十个人</em></h2>
+    <div class="meta" id="aMeta"></div>
+    <p class="lead" id="aDesc">这张图的左右和你站在本垒时的左右完全一致。右手边是一垒方向，左手边是三垒方向，正前方是投手和二垒。上场前花三秒扫一遍，看看十个人分别站在哪。</p>
+    <div class="roster" id="roster"></div>
+    <p class="hint">点图上任何一个人，或按数字键 1 到 9，0 对应自由人。跑垒路线按钮会画出从本垒出发的一圈方向。防守责任区只是大致范围，实际会根据打者习惯整体挪动。</p>
+    <p class="note">5 分钟。先让他们指出自己的右手边是哪个垒，再点两三个位置讲职责，最后打开跑垒路线。</p>
+  </aside>
+</main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var NS='http://www.w3.org/2000/svg';
+
+  var P=[
+    {n:1,  x:500, y:658, zh:'投手',   en:'Pitcher',     grp:'内场',
+     t:'把球投给你的人。出手之后他立刻变成一名防守员，而且正对着你，是全场离你最近的防守。'},
+    {n:2,  x:500, y:818, zh:'捕手',   en:'Catcher',     grp:'内场',
+     t:'蹲在你身后，接住你没打到的球，并负责本垒的封杀。'},
+    {n:3,  x:640, y:628, up:1, zh:'一垒手', en:'First Base',  grp:'内场',
+     t:'站在一垒垒包后方、靠外野的一侧。他是内场接传球最多的人，你冲一垒时他会回到垒包踩住界内一侧那块等球。'},
+    {n:4,  x:560, y:545, zh:'二垒手', en:'Second Base', grp:'内场',
+     t:'站在二垒垒包附近偏一垒一侧，比一三垒手更深。负责二垒的封杀和双杀转传。'},
+    {n:5,  x:360, y:628, up:1, zh:'三垒手', en:'Third Base',  grp:'内场',
+     t:'站在三垒垒包后方、靠外野的一侧。这个位置来球又快又强，俗称热角。'},
+    {n:6,  x:440, y:545, zh:'游击手', en:'Shortstop',   grp:'内场',
+     t:'站在二垒垒包附近偏三垒一侧，和二垒手对称。这是内场处理球最多的位置。'},
+    {n:7,  x:258, y:368, zh:'左外野', en:'Left Field',  grp:'外场',
+     t:'守外场左侧，也就是三垒方向的深远处。'},
+    {n:8,  x:500, y:300, zh:'中外野', en:'Center Field',grp:'外场',
+     t:'守外场正中，跑动范围最大，两侧的外野手都听他指挥。'},
+    {n:9,  x:742, y:368, zh:'右外野', en:'Right Field', grp:'外场',
+     t:'守外场右侧，也就是一垒方向的深远处。'},
+    {n:10, x:530, y:425, zh:'自由人', en:'Rover',       grp:'内外场之间',
+     t:'慢投垒球独有的第十人，站在中外野手和二垒手之间，位置不固定，哪里薄就补哪里。'}
+  ];
+
+  var g=document.getElementById('players'), roster=document.getElementById('roster');
+  var aTag=document.getElementById('aTag'), aName=document.getElementById('aName'),
+      aMeta=document.getElementById('aMeta'), aDesc=document.getElementById('aDesc');
+  var cur=null;
+
+  P.forEach(function(p){
+    var node=document.createElementNS(NS,'g');
+    node.setAttribute('class','pl');
+    node.setAttribute('data-n',p.n);
+    node.setAttribute('tabindex','0');
+    node.setAttribute('role','button');
+    node.setAttribute('aria-label',p.zh);
+
+    var c=document.createElementNS(NS,'circle');
+    c.setAttribute('class','dot');
+    c.setAttribute('cx',p.x);c.setAttribute('cy',p.y);c.setAttribute('r',18);
+    c.setAttribute('fill', p.n===10 ? '#D4E03A' : '#1F5E36');
+    c.setAttribute('stroke','#FFFFFF');c.setAttribute('stroke-width','2.5');
+
+    var t=document.createElementNS(NS,'text');
+    t.setAttribute('x',p.x);t.setAttribute('y',p.y+6);t.setAttribute('text-anchor','middle');
+    t.setAttribute('class','tnum');t.setAttribute('font-size','16');
+    t.setAttribute('fill', p.n===10 ? '#1A2119' : '#FFFFFF');
+    t.textContent=p.n;
+
+    var l=document.createElementNS(NS,'text');
+    l.setAttribute('x',p.x);l.setAttribute('y',p.up?p.y-28:p.y+38);l.setAttribute('text-anchor','middle');
+    l.setAttribute('class','tx');l.setAttribute('font-size','16');
+    l.textContent=p.zh;
+
+    node.appendChild(c);node.appendChild(t);node.appendChild(l);
+    g.appendChild(node);
+
+    node.addEventListener('click',function(){ pick(p.n); });
+    node.addEventListener('mouseenter',function(){ pick(p.n); });
+    node.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); pick(p.n); }
+    });
+
+    var b=document.createElement('button');
+    b.className='rb';b.dataset.n=p.n;b.setAttribute('aria-pressed','false');
+    var bb=document.createElement('b');bb.textContent=p.n;
+    b.appendChild(bb);b.appendChild(document.createTextNode(p.zh));
+    b.addEventListener('click',function(){ pick(p.n); });
+    roster.appendChild(b);
+  });
+
+  function pill(txt,hot){
+    var s=document.createElement('span');
+    s.className='pill'+(hot?' hot':'');s.textContent=txt;return s;
+  }
+
+  function pick(n){
+    var p=P.filter(function(q){return q.n===n;})[0];
+    if(!p) return;
+    cur=n;
+    aTag.textContent=p.grp+' · '+p.en;
+    aName.innerHTML='<em>'+p.n+'</em> '+p.zh;
+    aMeta.innerHTML='';
+    aMeta.appendChild(pill(p.grp));
+    aDesc.textContent=p.t;
+    document.querySelectorAll('.pl').forEach(function(el){
+      el.classList.toggle('on', +el.dataset.n===n);
+    });
+    document.querySelectorAll('.zone').forEach(function(z){
+      z.classList.toggle('on', +z.dataset.zone===n);
+    });
+    document.querySelectorAll('.rb').forEach(function(b){
+      b.setAttribute('aria-pressed', String(+b.dataset.n===n));
+    });
+  }
+
+  function reset(){
+    cur=null;
+    aTag.textContent='站在本垒，先看清楚';
+    aName.innerHTML='面前有<em>十个人</em>';
+    aMeta.innerHTML='';
+    aDesc.textContent='这张图的左右和你站在本垒时的左右完全一致。右手边是一垒方向，左手边是三垒方向，正前方是投手和二垒。上场前花三秒扫一遍，看看十个人分别站在哪。';
+    document.querySelectorAll('.pl').forEach(function(el){ el.classList.remove('on'); });
+    document.querySelectorAll('.zone').forEach(function(z){ z.classList.remove('on'); });
+    document.querySelectorAll('.rb').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+  }
+
+  var LAYERS={tZones:'layerZones', tGaps:'layerGaps', tRun:'layerRun', tDims:'layerDims'};
+  function setLayer(btnId, on){
+    var btn=document.getElementById(btnId), lay=document.getElementById(LAYERS[btnId]);
+    var want=(on==null)? btn.getAttribute('aria-pressed')!=='true' : on;
+    btn.setAttribute('aria-pressed', String(want));
+    lay.classList.toggle('on', want);
+    if(btnId==='tZones' && want && cur==null){
+      document.querySelectorAll('.zone').forEach(function(z){ z.classList.add('on'); });
+    }
+    if(btnId==='tZones' && !want){
+      document.querySelectorAll('.zone').forEach(function(z){ z.classList.remove('on'); });
+    }
+  }
+  Object.keys(LAYERS).forEach(function(id){
+    document.getElementById(id).addEventListener('click',function(){ setLayer(id); });
+  });
+  document.getElementById('tClear').addEventListener('click',function(){
+    reset();
+    Object.keys(LAYERS).forEach(function(id){ setLayer(id,false); });
+  });
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') { document.getElementById('tClear').click(); }
+    var k=parseInt(e.key,10);
+    if(!isNaN(k)){ pick(k===0?10:k); }
+  });
+
+  var __np=document.getElementById('page');
+  document.getElementById('bNote').addEventListener('click',function(){
+    var on=__np.classList.toggle('notes');
+    this.classList.toggle('on', on);
+  });
+})();
+</script>

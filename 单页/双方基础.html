@@ -1,0 +1,626 @@
+<meta charset="utf-8">
+<title>规则课双方基础</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+
+<style>
+:root{
+  --bg:#F3F4EE; --bg2:#E8EBE1; --card:#FFFFFF;
+  --ink:#1A2119; --ink2:#4B564A; --ink3:#7A8477; --line:#CBD1C1;
+  --turf-deep:#1F5E36; --clay:#B4573C; --force:#C4302B;
+  --fd:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  --fb:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  font-size:clamp(13px, 0.52vw + 0.78vh, 19px);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2.5px solid var(--clay);outline-offset:2px}
+
+#page{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%}
+
+header{
+  display:flex;align-items:center;gap:1.4rem;
+  padding:1.1rem 2.2rem;border-bottom:1px solid var(--line);background:var(--card)
+}
+.brand{display:grid;gap:.15rem;margin-right:auto}
+.brand b{font-family:var(--fd);font-weight:900;font-size:1.3rem;letter-spacing:-.01em}
+.brand small{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.2em;color:var(--clay)}
+.hkeys{font-family:var(--fd);font-size:.74rem;color:var(--ink3);letter-spacing:.04em}
+.hkeys kbd{font-family:var(--fd);font-size:.72rem;border:1px solid var(--line);border-radius:3px;
+  padding:.05rem .38rem;background:var(--bg);color:var(--ink2);margin:0 .2rem}
+
+main{display:grid;grid-template-columns:30rem minmax(0,1fr);min-height:0}
+
+aside{
+  border-right:1px solid var(--line);background:var(--bg2);min-height:0;
+  display:grid;grid-template-rows:minmax(0,1fr) auto
+}
+.steps{list-style:none;margin:0;padding:1.6rem 1.6rem 1rem;overflow:auto;
+  display:flex;flex-direction:column;gap:.55rem;counter-reset:st}
+.steps li{
+  counter-increment:st;position:relative;cursor:default;
+  padding:.85rem 1rem .9rem 3.1rem;border-left:4px solid transparent;border-radius:0 4px 4px 0;
+  transition:opacity .35s ease,background .25s ease,border-color .25s ease,color .25s ease
+}
+.steps li::before{
+  content:counter(st);position:absolute;left:.9rem;top:.9rem;
+  width:1.55rem;height:1.55rem;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--fd);font-weight:900;font-size:.82rem;background:var(--line);color:var(--ink2)
+}
+.steps li b{display:block;font-family:var(--fd);font-weight:900;font-size:1.3rem;line-height:1.3;letter-spacing:-.01em}
+.steps li p{margin:.35rem 0 0;font-size:1rem;line-height:1.65;color:var(--ink2)}
+.steps li p em{font-style:normal;font-weight:700;color:var(--ink)}
+.steps li p.tip{font-size:.86rem;color:var(--clay);font-weight:700}
+.steps li.future{opacity:0;visibility:hidden}
+.steps li.past{color:var(--ink3)}
+.steps li.past p,.steps li.past p em,.steps li.past p.tip{color:var(--ink3)}
+.steps li.cur{background:var(--card);border-left-color:var(--turf-deep)}
+.steps li.cur::before{background:var(--turf-deep);color:#FFFFFF}
+
+.ctrl{display:flex;align-items:center;gap:.5rem;padding:1rem 1.6rem;border-top:1px solid var(--line);background:var(--bg2)}
+.ctrl .ct{font-family:var(--fd);font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink2);margin-right:auto;font-size:.92rem}
+.btn{
+  font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.04em;
+  background:var(--card);color:var(--ink2);border:1px solid var(--line);
+  padding:.48rem .95rem;border-radius:2px;cursor:pointer;white-space:nowrap
+}
+.btn:hover{color:var(--ink);border-color:var(--ink3)}
+.btn.primary{background:var(--turf-deep);color:#FFFFFF;border-color:var(--turf-deep)}
+.btn.primary:hover{background:#174A2A}
+.btn:disabled{opacity:.4;cursor:default}
+
+#stage{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto auto;padding:1rem 2rem 1.2rem;gap:.6rem}
+#svgbox{min-height:0;display:grid;place-items:center}
+svg#dia{height:100%;width:auto;max-width:100%;display:block}
+.cap{
+  text-align:center;font-family:var(--fd);font-weight:900;font-size:1.65rem;line-height:1.35;
+  min-height:2.3em;display:grid;place-items:center;color:var(--ink);
+  opacity:0;transform:translateY(.35rem);transition:opacity .35s ease,transform .35s ease
+}
+.cap.in{opacity:1;transform:none}
+.legend{display:flex;justify-content:center;flex-wrap:wrap;gap:.5rem 1.5rem;font-size:.86rem;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:.45rem}
+.legend i{width:.8rem;height:.8rem;border-radius:50%;display:inline-block;border:2px solid #FFFFFF;box-shadow:0 0 0 1px var(--line)}
+.legend u{display:inline-block;width:1.6rem;height:0;border-top:4px solid var(--force);text-decoration:none}
+.legend u.no{border-top:3px dashed var(--ink3)}
+
+.sb{font-family:var(--fd);font-weight:800}
+.lbl{font-family:var(--fb);font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+.fx{transition:opacity .45s ease}
+.hit{fill:transparent;pointer-events:none}
+svg.edit .hit{pointer-events:all;cursor:pointer}
+svg.edit .hit:hover{fill:rgba(212,224,58,.35)}
+
+@media (max-width:1000px){
+  body{overflow:auto}
+  #page{height:auto;min-height:100%}
+  main{grid-template-columns:minmax(0,1fr)}
+  aside{border-right:0;border-bottom:1px solid var(--line)}
+  #stage{min-height:70vh}
+  svg#dia{height:auto;width:100%}
+  .hkeys{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .steps li,.cap,.fx{transition:none}
+}
+
+/* 点一下播一段 */
+#svgbox{position:relative}
+#svgbox.wait{cursor:pointer}
+.cue{position:absolute;right:.6rem;bottom:.6rem;font-family:var(--fd);font-size:.82rem;font-weight:700;
+  background:#C8553A;color:#FFFFFF;border-radius:99px;padding:.35rem .9rem;opacity:0;pointer-events:none;
+  transition:opacity .3s ease}
+.cue.on{opacity:1;animation:cuePulse 1.6s ease-in-out infinite}
+@keyframes cuePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.btn.play{background:#C8553A!important;border-color:#C8553A!important;color:#FFFFFF!important}
+@media (prefers-reduced-motion:reduce){.cue.on{animation:none}}
+
+.note{display:none;margin:.55rem 0 0;font-size:.85rem;line-height:1.6;color:#B4573C;
+  border-left:3px solid #B4573C;padding-left:.7rem;font-weight:500}
+#page.notes .note{display:block}
+.btn.on,.tg.on{background:#B4573C!important;border-color:#B4573C!important;color:#FFFFFF!important}
+</style>
+
+<div id="page">
+<header>
+  <div class="brand">
+    <small>板块三 · 双方都要懂的基础</small>
+    <b>读懂局面：被迫、封杀与触杀、补踩</b>
+  </div>
+  <div class="hkeys"><kbd>→</kbd>播放 / 下一步<kbd>←</kbd>上一步<kbd>R</kbd>重播</div>
+</header>
+
+<main>
+  <aside>
+    <ol class="steps" id="steps">
+      <li>
+        <b>先读局面</b>
+        <p>每一球之前先看三件事：<em>垒上有谁</em>、<em>几出局</em>、<em>打出的是什么球</em>。防守怎么传、跑者怎么跑，都从这三件事来。</p>
+        <p class="note">2 分钟。问他们：这三件事哪个最容易忘？答案通常是出局数。</p>
+      </li>
+      <li>
+        <b>被迫进垒</b>
+        <p>打者打出界内球，必须跑向一垒。一垒上的人被他顶走，也必须往前跑，这叫<em>被迫</em>。身后的垒没人顶你，你就<em>不是被迫的</em>，可以留在原垒。</p>
+        <p class="tip">讲完可以直接点图上的垒，自己摆局面。</p>
+        <p class="note">4 分钟。讲完用点垒功能现场摆两三个局面，让他们判断谁被迫。</p>
+      </li>
+      <li>
+        <b>封杀与触杀</b>
+        <p><em>被迫</em>的跑者：防守拿着球踩到他要去的垒，就是封杀。<br><em>不被迫</em>的跑者：防守必须拿着球碰到他，就是触杀。<br>本垒封杀只能踩白色本垒板。</p>
+        <p class="note">4 分钟。口诀只有一句：被迫就踩垒，不被迫就碰人。</p>
+      </li>
+      <li>
+        <b>飞球补踩</b>
+        <p>飞球被接住时，跑者必须<em>回到原来的垒踩一下</em>，才能再往前跑。提前跑出去没回来的，防守把球传回那个垒，他就出局。</p>
+        <p class="note">3 分钟。问他们：两出局时还要不要补踩？答案留到情景六揭晓。</p>
+      </li>
+    </ol>
+    <div class="ctrl">
+      <span class="ct" id="ct">1 / 4</span>
+      <button class="btn" id="bNote">讲解提示</button>
+      <button class="btn" id="bPrev">上一步</button>
+      <button class="btn" id="bReplay">重播</button>
+      <button class="btn primary" id="bNext">下一步</button>
+    </div>
+  </aside>
+
+  <div id="stage">
+    <div id="svgbox">
+      <svg id="dia" viewBox="0 0 640 610" role="img" aria-label="局面板和简化球场，演示被迫进垒、封杀、触杀和补踩">
+        <defs>
+          <marker id="mRed" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#C4302B"/>
+          </marker>
+          <marker id="mGrey" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#7A8477"/>
+          </marker>
+        </defs>
+
+        <!-- 局面板 -->
+        <rect x="20" y="16" width="600" height="138" rx="6" fill="#1A2119"/>
+        <text x="40" y="42" class="sb" font-size="13" fill="#D4E03A">局面</text>
+        <text x="130" y="42" class="sb" font-size="13" fill="#7A8477" text-anchor="middle">垒上有谁</text>
+        <text x="330" y="42" class="sb" font-size="13" fill="#7A8477" text-anchor="middle">几出局</text>
+        <text x="510" y="42" class="sb" font-size="13" fill="#7A8477" text-anchor="middle">什么球</text>
+        <line x1="230" y1="30" x2="230" y2="142" stroke="#3A4238"/>
+        <line x1="430" y1="30" x2="430" y2="142" stroke="#3A4238"/>
+        <path d="M130,138 L164,104 L130,70 L96,104 Z" fill="none" stroke="#4B564A" stroke-width="2"/>
+        <rect id="mb1" x="155" y="95" width="18" height="18" fill="#3A4238" stroke="#7A8477" transform="rotate(45 164 104)"/>
+        <rect id="mb2" x="121" y="61" width="18" height="18" fill="#3A4238" stroke="#7A8477" transform="rotate(45 130 70)"/>
+        <rect id="mb3" x="87" y="95" width="18" height="18" fill="#3A4238" stroke="#7A8477" transform="rotate(45 96 104)"/>
+        <path d="M124,132 h12 l0,6 l-6,6 l-6,-6 Z" fill="#7A8477"/>
+        <circle id="o1" cx="300" cy="98" r="12" fill="#3A4238"/>
+        <circle id="o2" cx="330" cy="98" r="12" fill="#3A4238"/>
+        <circle id="o3" cx="360" cy="98" r="12" fill="#3A4238"/>
+        <rect x="450" y="80" width="120" height="36" rx="18" fill="#2A3328"/>
+        <text id="bt" x="510" y="104" class="sb" font-size="17" fill="#E8EBE1" text-anchor="middle">—</text>
+        <rect id="ringB" class="fx" opacity="0" x="76" y="54" width="108" height="96" rx="10" fill="none" stroke="#D4E03A" stroke-width="3"/>
+        <rect id="ringO" class="fx" opacity="0" x="278" y="76" width="104" height="44" rx="22" fill="none" stroke="#D4E03A" stroke-width="3"/>
+        <rect id="ringT" class="fx" opacity="0" x="442" y="72" width="136" height="52" rx="26" fill="none" stroke="#D4E03A" stroke-width="3"/>
+        <circle class="hit" data-b="1" cx="164" cy="104" r="18"/>
+        <circle class="hit" data-b="2" cx="130" cy="70" r="18"/>
+        <circle class="hit" data-b="3" cx="96" cy="104" r="18"/>
+
+        <!-- 球场 -->
+        <path d="M320,560 L51.3,291.3 A380,380 0 0 1 588.7,291.3 Z" fill="#6DAA79"/>
+        <path d="M51.3,291.3 A380,380 0 0 1 588.7,291.3" fill="none" stroke="#1F5E36" stroke-width="3" stroke-dasharray="9 6"/>
+        <path d="M320,584 L484,420 L320,256 L156,420 Z" fill="#D39A74"/>
+        <path d="M320,560 L51.3,291.3 M320,560 L588.7,291.3" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+        <path d="M320,560 L460,420 L320,280 L180,420 Z" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+        <circle cx="320" cy="408" r="22" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+        <rect x="451" y="411" width="18" height="18" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 460 420)"/>
+        <rect x="311" y="271" width="18" height="18" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 320 280)"/>
+        <rect x="171" y="411" width="18" height="18" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 180 420)"/>
+        <path d="M311,550 h18 l0,9 l-9,10 l-9,-10 Z" fill="#FFFFFF" stroke="#1A2119" stroke-width="1.2"/>
+        <text x="492" y="432" class="lbl" font-size="15">一垒</text>
+        <text x="320" y="252" class="lbl" font-size="15" text-anchor="middle">二垒</text>
+        <text x="148" y="432" class="lbl" font-size="15" text-anchor="end">三垒</text>
+
+        <g id="arrows"></g>
+        <g id="fielders"></g>
+        <circle id="ring" cx="0" cy="0" r="12" fill="none" stroke="#D4E03A" stroke-width="4" opacity="0"/>
+
+        <g id="r1" class="fx" opacity="0"><circle r="13" fill="#C8553A" stroke="#FFFFFF" stroke-width="2.5"/></g>
+        <g id="r2" class="fx" opacity="0"><circle r="13" fill="#C8553A" stroke="#FFFFFF" stroke-width="2.5"/></g>
+        <g id="r3" class="fx" opacity="0"><circle r="13" fill="#C8553A" stroke="#FFFFFF" stroke-width="2.5"/></g>
+        <g id="bat" class="fx" opacity="0"><circle r="13" fill="#C8553A" stroke="#FFFFFF" stroke-width="2.5"/></g>
+        <g id="ball" class="fx" opacity="0"><circle r="7" fill="#D4E03A" stroke="#5E6A00" stroke-width="1.5"/></g>
+        <g id="badge" class="fx" opacity="0">
+          <rect id="badgeBg" x="-30" y="-16" width="60" height="32" rx="16" fill="#C4302B" stroke="#FFFFFF" stroke-width="2.5"/>
+          <text id="badgeTx" y="6" class="sb" font-size="16" fill="#FFFFFF" text-anchor="middle">出局</text>
+        </g>
+
+        <circle class="hit" data-b="1" cx="460" cy="420" r="30"/>
+        <circle class="hit" data-b="2" cx="320" cy="280" r="30"/>
+        <circle class="hit" data-b="3" cx="180" cy="420" r="30"/>
+      </svg>
+      <div class="cue" id="cue">▶ 点一下继续</div>
+    </div>
+    <div class="cap" id="cap"></div>
+    <div class="legend">
+      <span><i style="background:#C8553A"></i>进攻方</span>
+      <span><i style="background:#1F5E36"></i>防守方</span>
+      <span><i style="background:#D4E03A"></i>球</span>
+      <span><u></u>被迫</span>
+      <span><u class="no"></u>不被迫</span>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var NS='http://www.w3.org/2000/svg';
+  var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SLOW=1.6;
+  function $(id){ return document.getElementById(id); }
+
+  var HOME=[300,556], PLATE=[320,560], B1=[460,420], B2=[320,280], B3=[180,420];
+  var BASE={0:PLATE,1:B1,2:B2,3:B3,4:PLATE};
+  var NAME={1:'一垒',2:'二垒',3:'三垒'};
+  var FPOS={fP:[320,408],fC:[320,592],f1:[478,388],f2:[372,272],fS:[268,272],f3:[162,388],fL:[150,250],fCF:[320,200],fR:[490,250],fX:[350,236]};
+
+  var fg=$('fielders');
+  Object.keys(FPOS).forEach(function(k){
+    var g=document.createElementNS(NS,'g'); g.setAttribute('id',k);
+    var c=document.createElementNS(NS,'circle');
+    c.setAttribute('r',11); c.setAttribute('fill','#1F5E36'); c.setAttribute('stroke','#FFFFFF'); c.setAttribute('stroke-width','2.5');
+    g.appendChild(c); fg.appendChild(g);
+  });
+
+  var R={1:$('r1'),2:$('r2'),3:$('r3')}, bat=$('bat'), ball=$('ball'), badge=$('badge'), cap=$('cap'), svg=$('dia');
+  var runId=0;
+
+  function place(el,x,y){ el._x=x; el._y=y; el.setAttribute('transform','translate('+x+','+y+')'); }
+  function show(el,on){ el.setAttribute('opacity', on?1:0); }
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, RM?0:ms*SLOW); }); }
+  function say(t){ cap.classList.remove('in'); void cap.offsetWidth; cap.textContent=t; cap.classList.add('in'); }
+  function outs(n){ for(var i=1;i<=3;i++) $('o'+i).setAttribute('fill', i<=n ? '#E35A4A' : '#3A4238'); }
+  function ballType(t){ $('bt').textContent=t||'—'; }
+
+  function tween(el,pts,dur,id){
+    return new Promise(function(res){
+      var last=pts[pts.length-1];
+      if(RM||!dur){ place(el,last[0],last[1]); res(); return; }
+      var path=[[el._x,el._y]].concat(pts), lens=[], tot=0;
+      for(var i=1;i<path.length;i++){ var d=Math.hypot(path[i][0]-path[i-1][0],path[i][1]-path[i-1][1]); lens.push(d); tot+=d; }
+      var t0=null;
+      function f(ts){
+        if(id!==runId){ res(); return; }
+        if(t0===null) t0=ts;
+        var k=Math.min(1,(ts-t0)/(dur*SLOW)), dist=k*tot, j=0;
+        while(j<lens.length-1 && dist>lens[j]){ dist-=lens[j]; j++; }
+        var a=path[j], b=path[j+1], u=lens[j]?Math.min(1,dist/lens[j]):1;
+        place(el,a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u);
+        if(k<1) requestAnimationFrame(f); else res();
+      }
+      requestAnimationFrame(f);
+    });
+  }
+  function arc(el,to,h,dur,id){
+    var x0=el._x,y0=el._y,x1=to[0],y1=to[1],cx=(x0+x1)/2,cy=Math.min(y0,y1)-h;
+    return new Promise(function(res){
+      if(RM){ place(el,x1,y1); res(); return; }
+      var t0=null;
+      function f(ts){
+        if(id!==runId){ res(); return; }
+        if(t0===null) t0=ts;
+        var k=Math.min(1,(ts-t0)/(dur*SLOW)), u=1-k;
+        place(el,u*u*x0+2*u*k*cx+k*k*x1,u*u*y0+2*u*k*cy+k*k*y1);
+        if(k<1) requestAnimationFrame(f); else res();
+      }
+      requestAnimationFrame(f);
+    });
+  }
+  function ringAt(p,id){
+    var r=$('ring'); r.setAttribute('cx',p[0]); r.setAttribute('cy',p[1]);
+    if(RM) return Promise.resolve();
+    return new Promise(function(res){
+      var t0=null;
+      function f(ts){
+        if(id!==runId){ r.setAttribute('opacity',0); res(); return; }
+        if(t0===null) t0=ts;
+        var k=Math.min(1,(ts-t0)/(650*SLOW));
+        r.setAttribute('r',12+22*k); r.setAttribute('opacity',1-k);
+        if(k<1) requestAnimationFrame(f); else res();
+      }
+      requestAnimationFrame(f);
+    });
+  }
+  function badgeAt(p,text,good){
+    $('badgeTx').textContent=text;
+    $('badgeBg').setAttribute('fill', good ? '#2A62A8' : '#C4302B');
+    place(badge,p[0],p[1]); show(badge,true);
+  }
+  function delay(ms,id,fn){ return (async function(){ await sleep(ms); if(id!==runId) return; await fn(); })(); }
+
+  /* 局面：跑者与被迫箭头 */
+  var occ={1:false,2:false,3:false};
+  function syncBases(){
+    for(var k=1;k<=3;k++){
+      $('mb'+k).setAttribute('fill', occ[k] ? '#C8553A' : '#3A4238');
+      if(occ[k]){ place(R[k],BASE[k][0],BASE[k][1]); show(R[k],true); } else { show(R[k],false); }
+    }
+  }
+  function clearArrows(){ $('arrows').innerHTML=''; }
+  function arrow(from,to,forced,label){
+    var a=BASE[from], b=BASE[to];
+    var dx=b[0]-a[0], dy=b[1]-a[1], L=Math.hypot(dx,dy), ux=dx/L, uy=dy/L;
+    var s=from===0?[HOME[0]+ux*18,HOME[1]+uy*18]:[a[0]+ux*24,a[1]+uy*24];
+    var e=[b[0]-ux*26,b[1]-uy*26];
+    var ln=document.createElementNS(NS,'line');
+    ln.setAttribute('x1',s[0]); ln.setAttribute('y1',s[1]); ln.setAttribute('x2',e[0]); ln.setAttribute('y2',e[1]);
+    ln.setAttribute('stroke', forced?'#C4302B':'#7A8477');
+    ln.setAttribute('stroke-width', forced?6:5);
+    if(!forced) ln.setAttribute('stroke-dasharray','10 8');
+    ln.setAttribute('stroke-linecap','round');
+    ln.setAttribute('marker-end', forced?'url(#mRed)':'url(#mGrey)');
+    $('arrows').appendChild(ln);
+    var mx=(s[0]+e[0])/2, my=(s[1]+e[1])/2, ox=mx-320, oy=my-420, oL=Math.hypot(ox,oy)||1;
+    var t=document.createElementNS(NS,'text');
+    t.setAttribute('x',mx+ox/oL*30); t.setAttribute('y',my+oy/oL*30+6);
+    t.setAttribute('class','lbl'); t.setAttribute('font-size','16'); t.setAttribute('text-anchor','middle');
+    t.setAttribute('fill', forced?'#C4302B':'#4B564A');
+    t.textContent=label;
+    $('arrows').appendChild(t);
+  }
+  function forcedOf(k){ for(var i=1;i<k;i++){ if(!occ[i]) return false; } return true; }
+  function drawForce(){
+    clearArrows();
+    arrow(0,1,true,'被迫');
+    for(var k=1;k<=3;k++){ if(occ[k]) arrow(k,k+1,forcedOf(k),forcedOf(k)?'被迫':'不被迫'); }
+  }
+  function forceSummary(){
+    var on=[1,2,3].filter(function(k){ return occ[k]; });
+    if(!on.length) return '垒上没人：只有打者被迫跑向一垒';
+    var f=on.filter(forcedOf).map(function(k){ return NAME[k]; });
+    var n=on.filter(function(k){ return !forcedOf(k); }).map(function(k){ return NAME[k]; });
+    var s=on.map(function(k){ return NAME[k]; }).join('、')+'有人：';
+    if(f.length) s+=f.join('、')+'被迫';
+    if(f.length && n.length) s+='，';
+    if(n.length) s+=n.join('、')+'不被迫';
+    return s;
+  }
+
+  function setState(o){
+    svg.classList.remove('edit');
+    occ={1:false,2:false,3:false};
+    (o.runners||[]).forEach(function(k){ occ[k]=true; });
+    syncBases();
+    outs(o.outs||0); ballType(o.ball);
+    place(bat,HOME[0],HOME[1]); show(bat,!!o.bat);
+    place(ball,HOME[0],HOME[1]-6); show(ball,false);
+    Object.keys(FPOS).forEach(function(k){ place($(k),FPOS[k][0],FPOS[k][1]); });
+    ['ringB','ringO','ringT'].forEach(function(k){ show($(k),false); });
+    $('ring').setAttribute('opacity',0);
+    show(badge,false); clearArrows();
+  }
+
+  /* ---------- 第一步：读局面 ---------- */
+  async function s1(id){
+    setState({bat:true});
+    say('每一球之前，先看三件事');
+    await beat(id); if(id!==runId) return;
+    show($('ringB'),true); occ[1]=true; syncBases();
+    say('一、垒上有谁：一垒有人');
+    await beat(id); if(id!==runId) return;
+    show($('ringB'),false); show($('ringO'),true); outs(1);
+    say('二、几出局：一出局');
+    await beat(id); if(id!==runId) return;
+    show($('ringO'),false); show($('ringT'),true); ballType('滚地球');
+    say('三、打出的是什么球：滚地球');
+    show(ball,true);
+    await tween(ball,[FPOS.fS],700,id); if(id!==runId) return;
+    await beat(id); if(id!==runId) return;
+    show($('ringT'),false); show(ball,false);
+    say('这三件事，决定防守怎么传、跑者怎么跑');
+  }
+
+  /* ---------- 第二步：被迫进垒 ---------- */
+  async function s2(id){
+    setState({runners:[1],bat:true,ball:'滚地球'});
+    say('一垒有人，打者打出界内球');
+    await beat(id); if(id!==runId) return;
+    arrow(0,1,true,'被迫');
+    say('打者必须跑向一垒');
+    await beat(id); if(id!==runId) return;
+    arrow(1,2,true,'被迫');
+    say('一垒上的人被他顶走，也必须往前跑');
+    await beat(id); if(id!==runId) return;
+
+    occ={1:false,2:true,3:false}; syncBases(); drawForce();
+    say('二垒有人、一垒空：二垒跑者身后没人顶，不被迫');
+    await beat(id); if(id!==runId) return;
+
+    occ={1:true,2:true,3:true}; syncBases(); drawForce();
+    say('满垒：所有人都被迫');
+    await beat(id); if(id!==runId) return;
+
+    occ={1:true,2:false,3:true}; syncBases(); drawForce();
+    say('一垒、三垒有人：三垒跑者不被迫，因为二垒空着');
+    await beat(id); if(id!==runId) return;
+
+    svg.classList.add('edit');
+    say('点图上的垒，自己摆一个局面试试');
+  }
+  function toggleBase(k){
+    if(cur!==1) return;
+    runId++;
+    if(pending){ var old=pending; pending=null; old.res(); }
+    done=true; syncBtn();
+    if(!svg.classList.contains('edit')){
+      setState({bat:true,ball:'滚地球'});
+      svg.classList.add('edit');
+    }
+    occ[k]=!occ[k]; syncBases(); drawForce();
+    say(forceSummary());
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.hit'),function(h){
+    h.addEventListener('click',function(e){ e.stopPropagation(); toggleBase(+h.dataset.b); });
+  });
+
+  /* ---------- 第三步：封杀与触杀 ---------- */
+  async function s3(id){
+    setState({runners:[1],bat:true,ball:'滚地球'});
+    say('一垒有人，打者打出滚地球');
+    await beat(id); if(id!==runId) return;
+    arrow(0,1,true,'被迫'); arrow(1,2,true,'被迫');
+    say('一垒跑者被迫去二垒');
+    await beat(id); if(id!==runId) return;
+
+    clearArrows();
+    say('球打到三垒手，他传向二垒');
+    await sleep(500); if(id!==runId) return;
+    show(ball,true);
+    var pR=tween(R[1],[[350,310]],1500,id);
+    var pB=tween(bat,[B1],1700,id);
+    var pF=delay(300,id,function(){ return tween($('f2'),[[326,286]],500,id); });
+    await tween(ball,[FPOS.f3],600,id); if(id!==runId) return;
+    await sleep(150); if(id!==runId) return;
+    await tween(ball,[[326,286]],550,id); if(id!==runId) return;
+    ringAt(B2,id); badgeAt([272,236],'出局');
+    say('封杀：拿着球踩到二垒就够了，不用碰他');
+    await Promise.all([pR,pB,pF]); if(id!==runId) return;
+    await beat(id); if(id!==runId) return;
+
+    setState({runners:[2],bat:true,ball:'滚地球'});
+    arrow(0,1,true,'被迫'); arrow(2,3,false,'不被迫');
+    say('换一个局面：二垒有人、一垒空，二垒跑者不是被迫的');
+    await beat(id); if(id!==runId) return;
+
+    clearArrows();
+    say('球打到游击手面前，他还是跑了');
+    await sleep(500); if(id!==runId) return;
+    show(ball,true);
+    var qR=tween(R[2],[[212,388]],1700,id);
+    var qB=tween(bat,[B1],1800,id);
+    var qF=delay(200,id,function(){ return tween($('f3'),[[188,410]],450,id); });
+    await tween(ball,[FPOS.fS],550,id); if(id!==runId) return;
+    await sleep(150); if(id!==runId) return;
+    await tween(ball,[[188,410]],500,id); if(id!==runId) return;
+    say('三垒手光踩着垒没用');
+    await sleep(250); if(id!==runId) return;
+    await Promise.all([ tween($('f3'),[[204,398]],250,id), tween(ball,[[204,398]],250,id) ]); if(id!==runId) return;
+    await qR; if(id!==runId) return;
+    ringAt([212,388],id); badgeAt([226,346],'出局');
+    say('触杀：必须拿着球碰到他');
+    await qB; if(id!==runId) return;
+    await beat(id); if(id!==runId) return;
+    show(badge,false);
+    say('被迫就踩垒，不被迫就碰人。本垒封杀只能踩白色本垒板');
+  }
+
+  /* ---------- 第四步：飞球补踩 ---------- */
+  async function s4(id){
+    setState({runners:[2],outs:1,bat:true,ball:'高飞球'});
+    say('二垒有人，一出局，打者打出高飞球');
+    await beat(id); if(id!==runId) return;
+
+    say('二垒跑者没等，直接往三垒跑');
+    await sleep(400); if(id!==runId) return;
+    show(ball,true);
+    var pB=tween(bat,[[420,460]],1500,id);
+    var pR=delay(200,id,function(){ return tween(R[2],[[258,342]],1100,id); });
+    await arc(ball,FPOS.fR,230,1700,id); if(id!==runId) return;
+    ringAt(FPOS.fR,id);
+    await Promise.all([pB,pR]); if(id!==runId) return;
+    say('接住了！他必须回到二垒重新踩');
+    await beat(id); if(id!==runId) return;
+
+    show(bat,false);
+    var pBack=tween(R[2],[B2],1300,id);
+    var pF=tween($('f2'),[[330,288]],450,id);
+    await sleep(250); if(id!==runId) return;
+    await tween(ball,[[330,288]],700,id); if(id!==runId) return;
+    ringAt(B2,id); badgeAt([272,236],'出局');
+    say('球先回到二垒：出局');
+    await Promise.all([pBack,pF]); if(id!==runId) return;
+    await beat(id); if(id!==runId) return;
+
+    setState({runners:[2],outs:1,bat:true,ball:'高飞球'});
+    say('同样的高飞球，这次他踩在二垒上等');
+    await sleep(700); if(id!==runId) return;
+    show(ball,true);
+    var qB=tween(bat,[[420,460]],1500,id);
+    await arc(ball,FPOS.fR,230,1700,id); if(id!==runId) return;
+    ringAt(FPOS.fR,id);
+    await qB; if(id!==runId) return;
+    say('接住了：现在再起跑');
+    await beat(id); if(id!==runId) return;
+
+    show(bat,false);
+    var qR=tween(R[2],[B3],1300,id);
+    var qF=tween($('f3'),[[186,412]],450,id);
+    await sleep(600); if(id!==runId) return;
+    await tween(ball,[[196,404]],1000,id); if(id!==runId) return;
+    await qR; if(id!==runId) return;
+    badgeAt([180,470],'安全',true);
+    say('补踩之后再跑：安全上三垒');
+    await qF; if(id!==runId) return;
+    await beat(id); if(id!==runId) return;
+    show(badge,false);
+    say('飞球被接住：先回原垒踩一下，再跑');
+  }
+
+  /* ---------- 翻页 ---------- */
+  var STEPS=[s1,s2,s3,s4];
+  var lis=Array.prototype.slice.call(document.querySelectorAll('#steps li'));
+  var cur=0, pending=null, done=false;
+  function beat(id){
+    return new Promise(function(res){
+      if(id!==runId){ res(); return; }
+      pending={res:res}; syncBtn();
+    });
+  }
+  function syncBtn(){
+    var b=$('bNext'), last=(cur===STEPS.length-1);
+    b.classList.toggle('play', !!pending);
+    if(pending){ b.textContent='▶ 播放'; b.disabled=false; }
+    else if(done){ b.textContent='下一步'; b.disabled=last; }
+    else { b.textContent='播放中…'; b.disabled=true; }
+    $('cue').classList.toggle('on', !!pending);
+    $('svgbox').classList.toggle('wait', !!pending);
+  }
+  function next(){
+    if(pending){ var p=pending; pending=null; syncBtn(); p.res(); }
+    else if(done && cur<STEPS.length-1){ go(cur+1); }
+  }
+  function go(n){
+    cur=Math.max(0,Math.min(STEPS.length-1,n));
+    lis.forEach(function(li,i){
+      li.classList.toggle('future', i>cur);
+      li.classList.toggle('past', i<cur);
+      li.classList.toggle('cur', i===cur);
+    });
+    lis[cur].scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});
+    $('ct').textContent=(cur+1)+' / '+STEPS.length;
+    $('bPrev').disabled=(cur===0);
+    runId++; var id=runId;
+    if(pending){ var old=pending; pending=null; old.res(); }
+    done=false; syncBtn();
+    Promise.resolve(STEPS[cur](id)).then(function(){ if(id===runId){ done=true; pending=null; syncBtn(); } });
+  }
+  $('bNext').addEventListener('click',next);
+  $('bPrev').addEventListener('click',function(){ go(cur-1); });
+  $('bReplay').addEventListener('click',function(){ go(cur); });
+  $('svgbox').addEventListener('click',function(){ if(pending) next(); });
+  lis.forEach(function(li,i){ li.addEventListener('click',function(){ if(i<=cur) go(i); }); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+    else if(e.key==='r'||e.key==='R'){ go(cur); }
+  });
+
+
+  var __np=$('page');
+  $('bNote').addEventListener('click',function(){
+    var on=__np.classList.toggle('notes');
+    this.classList.toggle('on', on);
+  });
+  go(0);
+})();
+</script>

@@ -1,0 +1,1523 @@
+<meta charset="utf-8">
+<title>慢投垒球规则课</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;600&display=swap">
+
+<style>
+/* ============ 令牌 ============ */
+:root{
+  --paper:#F2F4EC;
+  --surface:#FFFFFF;
+  --surface-2:#E7EADE;
+  --ink:#1C2219;
+  --ink-2:#4B554A;
+  --ink-3:#79837A;
+  --line:#D2D7C6;
+  --line-2:#BFC6B2;
+
+  --turf:#2F6B45;
+  --turf-deep:#255538;
+  --turf-soft:#D5E3D4;
+  --clay:#B4573C;
+  --clay-soft:#F0DACF;
+  --optic:#C3D22B;
+  --optic-ink:#5E6807;
+  --safe:#DE7A26;
+  --out:#A8281F;
+  --chalk:#FFFFFF;
+
+  --shadow:0 1px 2px rgba(28,34,25,.06), 0 8px 24px -12px rgba(28,34,25,.18);
+
+  --font-display:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-ui:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-body:'Noto Serif SC','Songti SC','SimSun',Georgia,serif;
+
+  --step:clamp(1rem,.92rem + .35vw,1.075rem);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#131610;
+    --surface:#1B1F17;
+    --surface-2:#252A20;
+    --ink:#E9ECE0;
+    --ink-2:#B0B8A8;
+    --ink-3:#828B7C;
+    --line:#333A2C;
+    --line-2:#434B3B;
+
+    --turf:#6BB183;
+    --turf-deep:#4F8F65;
+    --turf-soft:#1E2C21;
+    --clay:#DC8367;
+    --clay-soft:#33211A;
+    --optic:#D6E455;
+    --optic-ink:#D6E455;
+    --safe:#EE9345;
+    --out:#E3665A;
+    --chalk:#F4F6EC;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131610; --surface:#1B1F17; --surface-2:#252A20;
+  --ink:#E9ECE0; --ink-2:#B0B8A8; --ink-3:#828B7C;
+  --line:#333A2C; --line-2:#434B3B;
+  --turf:#6BB183; --turf-deep:#4F8F65; --turf-soft:#1E2C21;
+  --clay:#DC8367; --clay-soft:#33211A;
+  --optic:#D6E455; --optic-ink:#D6E455;
+  --safe:#EE9345; --out:#E3665A; --chalk:#F4F6EC;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--font-ui);font-size:var(--step);line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:var(--font-display);text-wrap:balance;margin:0}
+p{margin:0}
+a{color:var(--turf)}
+:focus-visible{outline:2.5px solid var(--safe);outline-offset:3px;border-radius:3px}
+
+/* ============ 报头 ============ */
+.masthead{
+  border-bottom:1px solid var(--line);
+  background:
+    linear-gradient(180deg,var(--surface) 0%,var(--paper) 100%);
+  position:relative;overflow:hidden;
+}
+.masthead::after{
+  content:"";position:absolute;inset:auto 0 0 0;height:4px;
+  background:linear-gradient(90deg,var(--turf) 0 33%,var(--clay) 33% 66%,var(--optic) 66% 100%);
+}
+.mast-in{max-width:1180px;margin:0 auto;padding:44px 24px 40px;
+  display:grid;gap:26px;grid-template-columns:minmax(0,1fr) auto;align-items:end}
+.eyebrow{
+  font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;color:var(--clay);display:flex;gap:10px;align-items:center
+}
+.eyebrow span{width:26px;height:1px;background:var(--clay);display:inline-block}
+h1{
+  font-size:clamp(2.3rem,1.4rem + 3.6vw,3.9rem);font-weight:900;
+  line-height:1.04;letter-spacing:-.02em;margin:14px 0 0;
+}
+h1 em{font-style:normal;color:var(--turf)}
+.dek{
+  font-family:var(--font-body);font-size:1.06rem;color:var(--ink-2);
+  max-width:22em;margin-top:16px;line-height:1.75
+}
+.facts{display:flex;gap:0;border:1px solid var(--line);border-radius:2px;background:var(--surface)}
+.fact{padding:12px 18px;border-right:1px solid var(--line);text-align:center}
+.fact:last-child{border-right:0}
+.fact b{display:block;font-family:var(--font-display);font-weight:800;font-size:1.5rem;
+  font-variant-numeric:tabular-nums;line-height:1.1}
+.fact small{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}
+
+/* ============ 骨架 ============ */
+.shell{max-width:1180px;margin:0 auto;padding:0 24px 80px;
+  display:grid;grid-template-columns:196px minmax(0,1fr);gap:52px;align-items:start}
+.rail{position:sticky;top:20px;padding:28px 0 0;font-size:.83rem}
+.rail h4{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:12px}
+.rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.rail a{
+  display:grid;grid-template-columns:24px 1fr;gap:8px;padding:5px 0;
+  color:var(--ink-3);text-decoration:none;border-left:2px solid transparent;padding-left:12px;
+  transition:color .15s,border-color .15s
+}
+.rail a i{font-style:normal;font-family:var(--font-display);font-weight:700;font-size:.72rem;
+  font-variant-numeric:tabular-nums;padding-top:2px}
+.rail a:hover{color:var(--ink)}
+.rail a.on{color:var(--turf);border-left-color:var(--turf);font-weight:700}
+.rail .print{margin-top:22px;border-top:1px solid var(--line);padding-top:16px;color:var(--ink-3);font-size:.75rem;line-height:1.55}
+
+main{padding-top:28px;min-width:0}
+section{padding:46px 0 10px;scroll-margin-top:16px}
+section+section{border-top:1px solid var(--line)}
+.sec-head{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:baseline;margin-bottom:10px}
+.num{font-family:var(--font-display);font-weight:800;font-size:.78rem;color:var(--clay);
+  letter-spacing:.06em;font-variant-numeric:tabular-nums;border:1px solid var(--clay);
+  padding:2px 7px;border-radius:2px;line-height:1.4}
+h2{font-size:clamp(1.5rem,1.2rem + 1vw,2rem);font-weight:900;letter-spacing:-.015em;line-height:1.2}
+.lede{font-family:var(--font-body);font-size:1.08rem;color:var(--ink-2);max-width:32em;margin:6px 0 22px}
+.prose{max-width:34em;font-family:var(--font-body);line-height:1.8}
+.prose p+p{margin-top:14px}
+h3{font-size:1.06rem;font-weight:700;margin:30px 0 10px;letter-spacing:-.005em}
+h3::before{content:"";display:inline-block;width:7px;height:7px;background:var(--turf);
+  margin-right:9px;vertical-align:middle;transform:rotate(45deg)}
+
+/* 列表 */
+ul.rules{list-style:none;margin:0;padding:0;max-width:34em;display:flex;flex-direction:column;gap:11px}
+ul.rules li{padding-left:22px;position:relative;line-height:1.65}
+ul.rules li::before{content:"";position:absolute;left:2px;top:.66em;width:8px;height:2px;background:var(--line-2)}
+ul.rules b{font-weight:700}
+code{font-family:var(--font-display);font-weight:600;background:var(--surface-2);
+  padding:1px 6px;border-radius:2px;font-size:.9em;letter-spacing:.01em}
+
+/* 标注块 */
+.note,.warn,.vary{
+  max-width:34em;margin:20px 0;padding:14px 18px;border-left:3px solid;
+  background:var(--surface);font-size:.95rem;line-height:1.68;border-radius:0 3px 3px 0
+}
+.note{border-color:var(--turf);background:var(--turf-soft)}
+.warn{border-color:var(--out);background:var(--clay-soft)}
+.vary{border-color:var(--safe);background:transparent;border-top:1px solid var(--line);
+  border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.note strong,.warn strong,.vary strong{
+  display:block;font-family:var(--font-ui);font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;margin-bottom:5px}
+.note strong{color:var(--turf-deep)}
+.warn strong{color:var(--out)}
+.vary strong{color:var(--safe)}
+:root[data-theme="dark"] .note strong{color:var(--turf)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .note strong{color:var(--turf)}}
+
+/* ============ 动画台 ============ */
+.stage{
+  margin:26px 0 8px;border:1px solid var(--line);border-radius:3px;
+  background:var(--surface);box-shadow:var(--shadow);overflow:hidden
+}
+.stage-bar{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  border-bottom:1px solid var(--line);background:var(--surface-2)
+}
+.stage-bar h4{font-size:.76rem;letter-spacing:.12em;text-transform:uppercase;
+  font-weight:700;color:var(--ink-2);flex:1;min-width:0}
+.btn{
+  font-family:var(--font-ui);font-size:.76rem;font-weight:700;letter-spacing:.04em;
+  border:1px solid var(--line-2);background:var(--surface);color:var(--ink);
+  padding:5px 12px;border-radius:2px;cursor:pointer;transition:background .15s,border-color .15s;
+  white-space:nowrap
+}
+.btn:hover{background:var(--turf);color:#fff;border-color:var(--turf)}
+.btn[aria-pressed="true"]{background:var(--turf);color:#fff;border-color:var(--turf)}
+.stage-body{padding:16px;overflow-x:auto}
+.stage svg{display:block;width:100%;height:auto;max-width:100%}
+.cap{padding:0 16px 14px;font-size:.84rem;color:var(--ink-3);line-height:1.6;font-family:var(--font-body)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;padding:0 16px 14px;font-size:.78rem;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+
+/* SVG 通用 */
+.s-turf{fill:var(--turf-soft)}
+.s-clay{fill:var(--clay-soft)}
+.s-line{stroke:var(--line-2);fill:none}
+.s-chalk{stroke:var(--chalk);stroke-width:2.5;fill:none}
+.s-txt{font-family:var(--font-ui);font-size:12px;font-weight:700;fill:var(--ink-2)}
+.s-txt-s{font-family:var(--font-ui);font-size:10.5px;font-weight:600;fill:var(--ink-3)}
+.s-num{font-family:var(--font-display);font-size:11px;font-weight:800;fill:#fff}
+.ball{fill:var(--optic);stroke:var(--optic-ink);stroke-width:1.2}
+.runner{fill:var(--clay)}
+.fielder{fill:var(--turf)}
+
+/* ============ 球场探索器 ============ */
+.field-wrap{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:0}
+.field-info{border-left:1px solid var(--line);padding:18px;min-width:0;background:var(--surface)}
+.field-info h5{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin:0 0 4px}
+.field-info .en{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--clay);font-weight:700}
+.field-info p{font-family:var(--font-body);font-size:.9rem;color:var(--ink-2);margin-top:10px;line-height:1.7}
+.field-info dl{margin:14px 0 0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.82rem}
+.field-info dt{color:var(--ink-3)}
+.field-info dd{margin:0;font-variant-numeric:tabular-nums;font-weight:600}
+.hot{cursor:pointer;fill:transparent;stroke:transparent;stroke-width:6}
+.hot:hover,.hot.on{fill:rgba(222,122,38,.22);stroke:var(--safe);stroke-width:2}
+.chipbar{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;border-top:1px solid var(--line)}
+.chip{font-size:.74rem;font-weight:600;padding:4px 10px;border:1px solid var(--line-2);
+  border-radius:99px;background:transparent;color:var(--ink-2);cursor:pointer}
+.chip:hover{border-color:var(--safe);color:var(--safe)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+/* ============ 计数模拟器 ============ */
+.count{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;padding:18px}
+.scoreboard{
+  background:var(--ink);border-radius:3px;padding:14px 18px;display:grid;gap:9px;min-width:170px
+}
+.sb-row{display:grid;grid-template-columns:34px 1fr;align-items:center;gap:10px}
+.sb-row span{font-family:var(--font-display);font-size:.66rem;letter-spacing:.14em;
+  text-transform:uppercase;font-weight:700;color:#9AA595}
+.dots{display:flex;gap:6px}
+.dots i{width:15px;height:15px;border-radius:50%;border:1.5px solid #4A5545;background:transparent;display:block}
+.dots i.lit{background:var(--optic);border-color:var(--optic)}
+.dots.b i.lit{background:var(--safe);border-color:var(--safe)}
+.count-side{min-width:0}
+.count-msg{
+  font-family:var(--font-body);font-size:.95rem;line-height:1.7;color:var(--ink-2);
+  min-height:3.4em;border-left:3px solid var(--line-2);padding-left:14px;margin-bottom:14px
+}
+.count-msg.hit{border-color:var(--turf);color:var(--ink)}
+.count-msg.bad{border-color:var(--out);color:var(--ink)}
+.count-btns{display:flex;flex-wrap:wrap;gap:8px}
+
+/* ============ 表格 ============ */
+.tbl-wrap{overflow-x:auto;margin:22px 0;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.88rem;min-width:520px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  background:var(--surface-2);font-weight:700;white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{font-weight:700;white-space:nowrap}
+td.num-c{font-variant-numeric:tabular-nums}
+
+/* 出局方式 */
+.outs{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0;
+  border:1px solid var(--line);border-radius:3px;overflow:hidden;margin:22px 0;background:var(--surface)}
+.outs div{padding:14px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.outs b{display:block;font-size:.94rem;margin-bottom:3px}
+.outs b::before{content:attr(data-n);font-family:var(--font-display);font-size:.7rem;color:var(--out);
+  margin-right:8px;font-variant-numeric:tabular-nums}
+.outs small{color:var(--ink-3);font-size:.82rem;line-height:1.55;display:block;font-family:var(--font-body)}
+
+/* 手势 */
+.signs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:22px 0}
+.sign{border:1px solid var(--line);border-radius:3px;background:var(--surface);padding:14px;text-align:center}
+.sign svg{width:100%;height:92px;margin-bottom:8px}
+.sign b{display:block;font-size:.9rem}
+.sign small{color:var(--ink-3);font-size:.76rem}
+
+/* 术语 */
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 28px;margin:20px 0;max-width:none}
+.gloss div{padding:11px 0;border-bottom:1px solid var(--line)}
+.gloss b{font-size:.94rem}
+.gloss em{font-style:normal;font-family:var(--font-display);font-size:.75rem;color:var(--clay);
+  letter-spacing:.04em;margin-left:8px;font-weight:600}
+.gloss small{display:block;color:var(--ink-3);font-size:.83rem;line-height:1.55;font-family:var(--font-body)}
+
+/* ============ 测验 ============ */
+.quiz{border:1px solid var(--line-2);border-radius:3px;background:var(--surface);
+  box-shadow:var(--shadow);overflow:hidden;margin:24px 0}
+.quiz-head{padding:16px 20px;border-bottom:1px solid var(--line);display:flex;
+  align-items:baseline;gap:14px;background:var(--surface-2)}
+.quiz-head h4{font-size:.95rem;font-weight:800;flex:1}
+.quiz-score{font-family:var(--font-display);font-weight:800;font-variant-numeric:tabular-nums;
+  font-size:.85rem;color:var(--turf)}
+.q{padding:18px 20px;border-bottom:1px solid var(--line)}
+.q:last-child{border-bottom:0}
+.q p{font-weight:600;margin-bottom:11px;line-height:1.6}
+.q p b{font-family:var(--font-display);color:var(--clay);margin-right:8px;font-size:.85rem}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{
+  text-align:left;font-family:var(--font-ui);font-size:.9rem;line-height:1.5;
+  border:1px solid var(--line);background:transparent;color:var(--ink);
+  padding:9px 13px;border-radius:2px;cursor:pointer;transition:border-color .15s,background .15s
+}
+.opt:hover:not(:disabled){border-color:var(--turf)}
+.opt:disabled{cursor:default;opacity:.72}
+.opt.right{border-color:var(--turf);background:var(--turf-soft);opacity:1;font-weight:700}
+.opt.wrong{border-color:var(--out);background:var(--clay-soft);opacity:1}
+.why{margin-top:11px;font-family:var(--font-body);font-size:.87rem;color:var(--ink-2);
+  border-left:3px solid var(--turf);padding-left:12px;line-height:1.65;display:none}
+.why.show{display:block}
+
+footer{border-top:1px solid var(--line);background:var(--surface)}
+.foot-in{max-width:1180px;margin:0 auto;padding:30px 24px 44px;font-size:.84rem;color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;font-family:var(--font-body)}
+
+/* ============ 响应式 ============ */
+@media (max-width:940px){
+  .shell{grid-template-columns:minmax(0,1fr);gap:0}
+  .rail{position:sticky;top:0;z-index:9;background:var(--paper);padding:10px 0;
+    border-bottom:1px solid var(--line);margin:0 -24px;padding-left:24px;padding-right:24px}
+  .rail h4,.rail .print{display:none}
+  .rail ol{flex-direction:row;overflow-x:auto;gap:4px;scrollbar-width:none}
+  .rail ol::-webkit-scrollbar{display:none}
+  .rail a{border-left:0;border-bottom:2px solid transparent;padding:4px 10px;white-space:nowrap;
+    grid-template-columns:auto auto}
+  .rail a.on{border-left:0;border-bottom-color:var(--turf)}
+  .field-wrap{grid-template-columns:minmax(0,1fr)}
+  .field-info{border-left:0;border-top:1px solid var(--line)}
+  .mast-in{grid-template-columns:minmax(0,1fr)}
+  .count{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  .mast-in{padding:32px 20px 30px}
+  .shell{padding:0 20px 60px}
+  .rail{margin:0 -20px;padding-left:20px;padding-right:20px}
+  .facts{flex-wrap:wrap}
+  .fact{flex:1 1 40%;border-bottom:1px solid var(--line)}
+}
+
+/* ============ 动画 ============ */
+@keyframes fly{to{offset-distance:100%}}
+@keyframes pop{0%{opacity:0;transform:scale(.5)}60%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}
+@keyframes fade{to{opacity:1}}
+.stage .anim{opacity:0}
+.stage.run .anim{animation-fill-mode:both;animation-play-state:running}
+
+/* 投球弧线 */
+.arc-ball{offset-rotate:0deg;opacity:0}
+.stage.run .arc-ball{animation:fly 1.9s cubic-bezier(.4,0,.6,1) forwards,fade .2s forwards}
+.stage.run .arc-ball.b2{animation-delay:.35s,.35s}
+.stage.run .arc-ball.b3{animation-delay:.7s,.7s}
+.verdict{opacity:0}
+.stage.run .verdict{animation:pop .4s 2.1s forwards}
+.stage.run .verdict.v2{animation-delay:2.35s}
+.stage.run .verdict.v3{animation-delay:2.6s}
+
+/* 通用平移动画由内联 style 定义的 CSS 变量驱动 */
+.mv{opacity:0}
+.stage.run .mv{animation:mvk var(--d,1.2s) var(--e,cubic-bezier(.45,.05,.3,1)) var(--dl,0s) forwards}
+@keyframes mvk{
+  0%{opacity:1;transform:translate(0,0)}
+  100%{opacity:1;transform:translate(var(--tx,0px),var(--ty,0px))}
+}
+.fadein{opacity:0}
+.stage.run .fadein{animation:pop .45s var(--dl,1s) forwards}
+
+@media (prefers-reduced-motion:reduce){
+  .stage .anim,.arc-ball,.mv,.fadein,.verdict{opacity:1!important;animation:none!important}
+  .arc-ball{offset-distance:100%!important}
+  .mv{transform:translate(var(--tx,0px),var(--ty,0px))!important}
+  *{scroll-behavior:auto!important}
+}
+</style>
+
+<header class="masthead">
+  <div class="mast-in">
+    <div>
+      <div class="eyebrow"><span></span>新队员规则课 · 第一讲</div>
+      <h1>慢投垒球<br><em>从零开始的完整规则</em></h1>
+      <p class="dek">没打过球、没看过比赛、分不清垒包和本垒板，都没关系。这一页把一场慢投垒球从开局到结束会遇到的每条规则讲清楚，配可以反复播放的动画。</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><b>7</b><small>局</small></div>
+      <div class="fact"><b>10</b><small>人防守</small></div>
+      <div class="fact"><b>3</b><small>出局换攻</small></div>
+      <div class="fact"><b>12"</b><small>球的周长</small></div>
+    </div>
+  </div>
+</header>
+
+<div class="shell">
+  <nav class="rail" aria-label="课程目录">
+    <h4>课纲</h4>
+    <ol id="rail">
+      <li><a href="#s1"><i>01</i>这是什么运动</a></li>
+      <li><a href="#s2"><i>02</i>球场</a></li>
+      <li><a href="#s3"><i>03</i>人和位置</a></li>
+      <li><a href="#s4"><i>04</i>比赛怎么走</a></li>
+      <li><a href="#s5"><i>05</i>投球</a></li>
+      <li><a href="#s6"><i>06</i>好球与坏球</a></li>
+      <li><a href="#s7"><i>07</i>击球</a></li>
+      <li><a href="#s8"><i>08</i>界内与界外</a></li>
+      <li><a href="#s9"><i>09</i>跑垒</a></li>
+      <li><a href="#s10"><i>10</i>一垒延长板</a></li>
+      <li><a href="#s11"><i>11</i>得分线</a></li>
+      <li><a href="#s12"><i>12</i>出局的方式</a></li>
+      <li><a href="#s13"><i>13</i>得分与胜负</a></li>
+      <li><a href="#s14"><i>14</i>死球与进垒</a></li>
+      <li><a href="#s15"><i>15</i>混合队规则</a></li>
+      <li><a href="#s16"><i>16</i>裁判手势</a></li>
+      <li><a href="#s17"><i>17</i>术语速查</a></li>
+      <li><a href="#s18"><i>18</i>随堂测验</a></li>
+    </ol>
+    <p class="print">动画会在滚到时自动播放，点「重放」可以再看一遍。手机横屏看球场图更清楚。</p>
+  </nav>
+
+  <main>
+
+  <!-- 01 -->
+  <section id="s1">
+    <div class="sec-head"><span class="num">01</span><h2>这是什么运动</h2></div>
+    <p class="lede">慢投垒球是垒球的一个分支。它的核心设计是：投手不许把球投快，所以每个人都打得到球，比赛靠跑和防守决胜负。</p>
+
+    <div class="prose">
+      <p>一队进攻、一队防守。进攻方按固定顺序轮流上场击球，把球打进场内后开始沿四个垒逆时针跑，跑完一圈回到本垒就得一分。防守方想办法制造三个出局，双方就交换攻守。这样来回七次，分多的一方获胜。</p>
+      <p>它和棒球最大的区别在投球。棒球和快投垒球的投手在拼球速与刁钻角度，击球员经常挥空；慢投垒球规定球必须以一条高高的抛物线飞过来，速度慢、落点可预判，新手第一天就能打中球。所以这项运动的乐趣不在"能不能碰到球"，而在打到哪里、跑不跑得到、防守接不接得住。</p>
+    </div>
+
+    <h3>三种球的差别</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>项目</th><th>慢投垒球</th><th>快投垒球</th><th>棒球</th></tr></thead>
+        <tbody>
+          <tr><td>投球方式</td><td>下手投，必须走高弧线</td><td>下手投，风车式全力投</td><td>上手投，全力投</td></tr>
+          <tr><td>球速</td><td class="num-c">很慢，约 30 km/h</td><td class="num-c">快，可达 110 km/h</td><td class="num-c">快，可达 150 km/h</td></tr>
+          <tr><td>防守人数</td><td class="num-c">10 人</td><td class="num-c">9 人</td><td class="num-c">9 人</td></tr>
+          <tr><td>偷垒</td><td>禁止</td><td>允许</td><td>允许</td></tr>
+          <tr><td>触击（短打）</td><td>禁止</td><td>允许</td><td>允许</td></tr>
+          <tr><td>球的大小</td><td>周长 30.5 cm（12 吋）</td><td>30.5 cm 或 27.9 cm</td><td>周长 23 cm</td></tr>
+          <tr><td>局数</td><td class="num-c">7 局</td><td class="num-c">7 局</td><td class="num-c">9 局</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note"><strong>一句话记住</strong>慢投垒球 = 人人都打得到球的垒球。规则里凡是"让比赛变快、变刁钻"的东西（偷垒、触击、快速球），基本都被删掉了。</div>
+  </section>
+
+  <!-- 02 -->
+  <section id="s2">
+    <div class="sec-head"><span class="num">02</span><h2>球场</h2></div>
+    <p class="lede">先认地方。点下面图上的任意区域，右边会告诉你它叫什么、干什么用。</p>
+
+    <div class="stage" data-auto="0">
+      <div class="stage-bar"><h4>球场交互图 · 点击任意区域</h4></div>
+      <div class="field-wrap">
+        <div class="stage-body">
+          <svg viewBox="0 0 780 600" role="img" aria-label="慢投垒球球场示意图">
+            <!-- 界外区 -->
+            <rect x="0" y="0" width="780" height="600" fill="var(--surface-2)"/>
+            <!-- 界内草地 -->
+            <path d="M390,540 L60,210 A466,466 0 0 1 720,210 Z" class="s-turf"/>
+            <!-- 内场土 -->
+            <path d="M390,562 L570,382 A254,254 0 0 0 210,382 Z" class="s-clay"/>
+            <!-- 垒线（粉线） -->
+            <path d="M390,540 L60,210" class="s-chalk"/>
+            <path d="M390,540 L720,210" class="s-chalk"/>
+            <path d="M390,540 L550,380 L390,220 L230,380 Z" class="s-chalk"/>
+            <!-- 外场围栏 -->
+            <path d="M60,210 A466,466 0 0 1 720,210" fill="none" stroke="var(--turf)" stroke-width="3" stroke-dasharray="7 5"/>
+            <!-- 界外杆 -->
+            <line x1="60" y1="210" x2="52" y2="178" stroke="var(--optic)" stroke-width="4"/>
+            <line x1="720" y1="210" x2="728" y2="178" stroke="var(--optic)" stroke-width="4"/>
+            <!-- 投手圈 -->
+            <circle cx="390" cy="366" r="30" fill="none" stroke="var(--chalk)" stroke-width="2"/>
+            <rect x="378" y="362" width="24" height="7" fill="var(--chalk)" stroke="var(--line-2)"/>
+            <!-- 垒包 -->
+            <rect x="540" y="370" width="20" height="20" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 550 380)"/>
+            <rect x="550" y="380" width="20" height="20" fill="var(--safe)" stroke="var(--ink-3)" transform="rotate(45 560 390)"/>
+            <rect x="380" y="210" width="20" height="20" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 390 220)"/>
+            <rect x="220" y="370" width="20" height="20" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 230 380)"/>
+            <!-- 本垒板 -->
+            <path d="M382,532 h16 l0,9 l-8,9 l-8,-9 Z" fill="var(--chalk)" stroke="var(--ink-3)"/>
+            <!-- 好球垫 -->
+            <rect x="378" y="546" width="24" height="15" fill="var(--optic)" stroke="var(--optic-ink)"/>
+            <!-- 击球区 -->
+            <rect x="344" y="520" width="30" height="44" fill="none" stroke="var(--chalk)" stroke-width="2"/>
+            <rect x="406" y="520" width="30" height="44" fill="none" stroke="var(--chalk)" stroke-width="2"/>
+            <!-- 得分线 -->
+            <line x1="452" y1="478" x2="500" y2="526" stroke="var(--safe)" stroke-width="3"/>
+            <rect x="452" y="524" width="26" height="16" fill="var(--safe)" stroke="var(--ink-3)" transform="rotate(-45 465 532)"/>
+            <!-- 跑垒道 -->
+            <path d="M404,554 L566,392" fill="none" stroke="var(--chalk)" stroke-width="2" stroke-dasharray="5 4"/>
+
+            <!-- 标注 -->
+            <text x="390" y="120" class="s-txt" text-anchor="middle">外场 OUTFIELD</text>
+            <text x="390" y="330" class="s-txt" text-anchor="middle">内场 INFIELD</text>
+            <text x="120" y="500" class="s-txt" text-anchor="middle">界外区</text>
+            <text x="660" y="500" class="s-txt" text-anchor="middle">界外区</text>
+            <text x="596" y="384" class="s-txt-s">一垒</text>
+            <text x="390" y="200" class="s-txt-s" text-anchor="middle">二垒</text>
+            <text x="176" y="384" class="s-txt-s">三垒</text>
+            <text x="430" y="360" class="s-txt-s">投手板</text>
+            <text x="330" y="588" class="s-txt-s" text-anchor="middle">本垒</text>
+            <text x="516" y="512" class="s-txt-s">得分线</text>
+
+            <!-- 热区 -->
+            <g id="hots">
+              <circle class="hot" data-k="home" cx="390" cy="544" r="30"/>
+              <circle class="hot" data-k="first" cx="556" cy="386" r="26"/>
+              <circle class="hot" data-k="second" cx="390" cy="220" r="24"/>
+              <circle class="hot" data-k="third" cx="230" cy="380" r="24"/>
+              <circle class="hot" data-k="mound" cx="390" cy="366" r="30"/>
+              <rect class="hot" data-k="mat" x="370" y="544" width="40" height="22"/>
+              <circle class="hot" data-k="infield" cx="300" cy="440" r="36"/>
+              <circle class="hot" data-k="outfield" cx="390" cy="150" r="46"/>
+              <circle class="hot" data-k="foul" cx="120" cy="470" r="42"/>
+              <circle class="hot" data-k="fence" cx="600" cy="180" r="34"/>
+              <circle class="hot" data-k="commit" cx="476" cy="502" r="26"/>
+              <rect class="hot" data-k="box" x="336" y="514" width="36" height="56"/>
+            </g>
+          </svg>
+        </div>
+        <aside class="field-info" id="finfo" aria-live="polite">
+          <div class="en" id="fen">HOME PLATE</div>
+          <h5 id="fzh">本垒板</h5>
+          <p id="fdesc">五角形的白板，嵌在地面里，是击球和得分的地方。击球员站在它两侧的击球区里打球；跑垒员绕完一圈回到这里就得一分。注意它是"板"不是"垒包"，不能踩上去站着。</p>
+          <dl id="fdl"><dt>宽度</dt><dd>43 cm</dd><dt>材质</dt><dd>橡胶，与地面齐平</dd></dl>
+        </aside>
+      </div>
+      <div class="chipbar" id="fchips"></div>
+    </div>
+
+    <h3>记住这四个数字</h3>
+    <ul class="rules">
+      <li><b>垒间距离 19.81 m</b>（65 呎）。这是慢投垒球的标准，比棒球和快投都远，所以跑者更难安全上垒。</li>
+      <li><b>投球距离 15.24 m</b>（50 呎，男子／混合）或 <b>14.02 m</b>（46 呎，女子）。从投手板量到本垒板尖端。</li>
+      <li><b>外场围栏 84 m</b> 左右。越过它就是全垒打。</li>
+      <li><b>跑垒方向逆时针</b>：本垒 → 一垒 → 二垒 → 三垒 → 回本垒。想象自己站在本垒面向投手，一垒在你的右手边。</li>
+    </ul>
+
+    <div class="vary"><strong>各联赛可能不同</strong>校园场地和临时场地常常把垒间缩短到 18.29 m，外场没有围栏就用锥桶或树线代替。开赛前听裁判说明本场的实际尺寸。</div>
+  </section>
+
+  <!-- 03 -->
+  <section id="s3">
+    <div class="sec-head"><span class="num">03</span><h2>人和位置</h2></div>
+    <p class="lede">防守方派 10 个人上场，每个位置有固定编号，记分和交流全靠这些编号。</p>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>十人防守站位</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 0 780 520" role="img" aria-label="十人防守站位图">
+          <path d="M390,470 L100,180 A410,410 0 0 1 680,180 Z" class="s-turf"/>
+          <path d="M390,488 L545,333 A219,219 0 0 0 235,333 Z" class="s-clay"/>
+          <path d="M390,470 L100,180" class="s-chalk"/>
+          <path d="M390,470 L680,180" class="s-chalk"/>
+          <path d="M390,470 L530,330 L390,190 L250,330 Z" class="s-chalk"/>
+          <rect x="522" y="322" width="16" height="16" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 530 330)"/>
+          <rect x="382" y="182" width="16" height="16" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 390 190)"/>
+          <rect x="242" y="322" width="16" height="16" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 250 330)"/>
+          <path d="M383,463 h14 l0,8 l-7,8 l-7,-8 Z" fill="var(--chalk)" stroke="var(--ink-3)"/>
+
+          <g class="fdr" data-n="1" data-x="390" data-y="320"></g>
+          <g class="fdr" data-n="2" data-x="390" data-y="496"></g>
+          <g class="fdr" data-n="3" data-x="512" data-y="352"></g>
+          <g class="fdr" data-n="4" data-x="470" data-y="278"></g>
+          <g class="fdr" data-n="5" data-x="268" data-y="352"></g>
+          <g class="fdr" data-n="6" data-x="310" data-y="278"></g>
+          <g class="fdr" data-n="7" data-x="180" data-y="210"></g>
+          <g class="fdr" data-n="8" data-x="330" data-y="150"></g>
+          <g class="fdr" data-n="9" data-x="600" data-y="210"></g>
+          <g class="fdr" data-n="10" data-x="452" data-y="150"></g>
+        </svg>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--turf)"></i>防守球员（编号即记分符号）</span>
+        <span><i style="background:var(--clay-soft);border:1px solid var(--clay)"></i>内场</span>
+        <span><i style="background:var(--turf-soft);border:1px solid var(--turf)"></i>外场</span>
+      </div>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>编号</th><th>位置</th><th>英文</th><th>干什么</th></tr></thead>
+        <tbody>
+          <tr><td class="num-c">1</td><td>投手</td><td>Pitcher</td><td>投球；出手后立刻变成一名内场防守员，要能接住冲着自己来的强袭球。</td></tr>
+          <tr><td class="num-c">2</td><td>捕手</td><td>Catcher</td><td>蹲在本垒后接住没被打到的球；守本垒的封杀；喊出全场的战术。</td></tr>
+          <tr><td class="num-c">3</td><td>一垒手</td><td>First Base</td><td>踩住一垒白色垒包接队友的传球完成封杀，是内场接传球最多的人。</td></tr>
+          <tr><td class="num-c">4</td><td>二垒手</td><td>Second Base</td><td>守一垒和二垒之间；负责二垒的封杀与双杀转传。</td></tr>
+          <tr><td class="num-c">5</td><td>三垒手</td><td>Third Base</td><td>守三垒附近，来球又快又强，俗称"热角"。</td></tr>
+          <tr><td class="num-c">6</td><td>游击手</td><td>Shortstop</td><td>守二垒和三垒之间，内场处理球最多的位置。</td></tr>
+          <tr><td class="num-c">7</td><td>左外野手</td><td>Left Field</td><td>守外场左侧。</td></tr>
+          <tr><td class="num-c">8</td><td>中外野手</td><td>Center Field</td><td>守外场正中，跑动范围最大，两侧外野手都听他指挥。</td></tr>
+          <tr><td class="num-c">9</td><td>右外野手</td><td>Right Field</td><td>守外场右侧。</td></tr>
+          <tr><td class="num-c">10</td><td>自由人</td><td>Rover</td><td>慢投垒球独有的第十人，站在内外场之间的空当，哪里薄补哪里。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>进攻方</h3>
+    <ul class="rules">
+      <li>进攻方只有一个人在场上打击，其余人在球员席等候。</li>
+      <li><b>打击顺序（打序）赛前定好，全场不能改。</b>换人可以，但新上场的人接替原来那个人的位置。</li>
+      <li>轮到谁就必须是谁上场。<b>打错顺序会被判出局</b>，而且那一棒打出的成绩取消。这是新人最常犯的错，上场前先确认自己是第几棒。</li>
+      <li>上一局最后一个打击的人，下一局由他的下一棒接着打，不会从第一棒重新开始。</li>
+    </ul>
+
+    <div class="vary"><strong>各联赛可能不同</strong>很多业余联赛允许"全员打击"：替补也进打序，防守 10 人轮换，这样每个人都有打击机会。我们队按这个来的话，打序可能有十几个人。</div>
+  </section>
+
+  <!-- 04 -->
+  <section id="s4">
+    <div class="sec-head"><span class="num">04</span><h2>比赛怎么走</h2></div>
+    <p class="lede">一场比赛由 7 局组成。每局分上下半，两队各进攻一次。攻方被抓到 3 个出局，立刻交换。</p>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>一局的结构</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 0 760 260" role="img" aria-label="局的结构与记分板">
+          <!-- 记分板 -->
+          <rect x="20" y="20" width="720" height="92" fill="var(--ink)" rx="3"/>
+          <text x="36" y="48" class="s-num" style="font-size:10px;fill:#9AA595;letter-spacing:.1em">局</text>
+          <text x="36" y="76" class="s-num" style="font-size:11px">客队</text>
+          <text x="36" y="100" class="s-num" style="font-size:11px">主队</text>
+          <g id="sbcols"></g>
+          <text x="660" y="48" class="s-num" style="font-size:10px;fill:#9AA595;letter-spacing:.1em">总分</text>
+
+          <!-- 流程 -->
+          <g transform="translate(20,146)">
+            <rect x="0" y="0" width="168" height="46" rx="3" fill="var(--surface-2)" stroke="var(--line-2)"/>
+            <text x="84" y="21" class="s-txt" text-anchor="middle">上半局</text>
+            <text x="84" y="36" class="s-txt-s" text-anchor="middle">客队进攻 · 主队防守</text>
+
+            <g class="fadein" style="--dl:1.2s">
+              <path d="M176,23 L206,23" stroke="var(--out)" stroke-width="2"/>
+              <path d="M200,18 L208,23 L200,28 Z" fill="var(--out)"/>
+              <rect x="214" y="0" width="120" height="46" rx="3" fill="var(--clay-soft)" stroke="var(--out)"/>
+              <text x="274" y="21" class="s-txt" text-anchor="middle" style="fill:var(--out)">3 人出局</text>
+              <text x="274" y="36" class="s-txt-s" text-anchor="middle">攻守立即交换</text>
+            </g>
+
+            <g class="fadein" style="--dl:1.8s">
+              <path d="M342,23 L372,23" stroke="var(--line-2)" stroke-width="2"/>
+              <path d="M366,18 L374,23 L366,28 Z" fill="var(--line-2)"/>
+              <rect x="380" y="0" width="168" height="46" rx="3" fill="var(--surface-2)" stroke="var(--line-2)"/>
+              <text x="464" y="21" class="s-txt" text-anchor="middle">下半局</text>
+              <text x="464" y="36" class="s-txt-s" text-anchor="middle">主队进攻 · 客队防守</text>
+            </g>
+
+            <g class="fadein" style="--dl:2.4s">
+              <path d="M556,23 L586,23" stroke="var(--turf)" stroke-width="2"/>
+              <path d="M580,18 L588,23 L580,28 Z" fill="var(--turf)"/>
+              <rect x="594" y="0" width="126" height="46" rx="3" fill="var(--turf-soft)" stroke="var(--turf)"/>
+              <text x="657" y="21" class="s-txt" text-anchor="middle" style="fill:var(--turf-deep)">这一局结束</text>
+              <text x="657" y="36" class="s-txt-s" text-anchor="middle">进入下一局</text>
+            </g>
+          </g>
+          <text x="20" y="236" class="s-txt-s">客队先攻，主队后攻。限时一小时，最多七局。</text>
+        </svg>
+      </div>
+    </div>
+
+    <ul class="rules">
+      <li><b>一局 = 上半局 + 下半局。</b>客队总是先进攻，主队后进攻。</li>
+      <li><b>3 个出局就换边</b>，不管垒上还站着几个人。垒上的人被"留在垒上"，下一局从空垒重新开始。</li>
+      <li><b>比赛限时一小时，最多七局。</b>距离结束不足十分钟时不再开新局。</li>
+      <li><b>主队领先就不用打最后半局。</b>上半局打完主队已经领先，比赛直接结束。</li>
+      <li><b>平局就是平局</b>，我们联赛不加赛。</li>
+    </ul>
+
+    <div class="vary"><strong>其他联赛</strong>有的联赛打平要加赛，常用"抢分局"：从第八局起，每半局开始时把上一局最后出局的球员直接放在二垒上。也有联赛设仁慈规则，分差过大提前结束。我们联赛这两条都没有。</div>
+  </section>
+
+  <!-- 05 -->
+  <section id="s5">
+    <div class="sec-head"><span class="num">05</span><h2>投球</h2></div>
+    <p class="lede">慢投垒球最特别的规则：球必须走高弧线。太平不行，太高也不行，必须落在规定的高度带里。</p>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>弧线高度判定 · 侧视图</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 -40 760 320" role="img" aria-label="投球弧线合法高度示意">
+          <!-- 合法高度带 -->
+          <rect x="100" y="126" width="560" height="62" fill="var(--turf-soft)" opacity=".85"/>
+          <line x1="100" y1="126" x2="660" y2="126" stroke="var(--turf)" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <line x1="100" y1="188" x2="660" y2="188" stroke="var(--turf)" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="668" y="130" class="s-txt-s" style="fill:var(--turf)">5 m 上限</text>
+          <text x="668" y="192" class="s-txt-s" style="fill:var(--turf)">1.83 m 下限</text>
+          <text x="106" y="160" class="s-txt" style="fill:var(--turf-deep)">最高点必须落在这条带里</text>
+
+          <!-- 地面 -->
+          <line x1="40" y1="250" x2="720" y2="250" stroke="var(--line-2)" stroke-width="2"/>
+          <rect x="86" y="244" width="46" height="6" fill="var(--chalk)" stroke="var(--ink-3)"/>
+          <text x="109" y="268" class="s-txt-s" text-anchor="middle">投手板</text>
+          <path d="M636,244 h28 l0,4 l-14,2 l-14,-2 Z" fill="var(--chalk)" stroke="var(--ink-3)"/>
+          <text x="650" y="268" class="s-txt-s" text-anchor="middle">本垒板</text>
+          <text x="380" y="268" class="s-txt-s" text-anchor="middle">15.24 m</text>
+          <path d="M140,258 L600,258" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="3 3"/>
+
+          <!-- 三条轨迹 -->
+          <path d="M110,215 Q380,182 650,240" fill="none" stroke="var(--out)" stroke-width="1.5" stroke-dasharray="4 4" opacity=".55"/>
+          <path d="M110,215 Q380,82 650,240" fill="none" stroke="var(--turf)" stroke-width="1.5" stroke-dasharray="4 4" opacity=".7"/>
+          <path d="M110,215 Q380,-14 650,240" fill="none" stroke="var(--out)" stroke-width="1.5" stroke-dasharray="4 4" opacity=".55"/>
+
+          <circle r="8" class="ball arc-ball b1" style="offset-path:path('M110,215 Q380,182 650,240')"/>
+          <circle r="8" class="ball arc-ball b2" style="offset-path:path('M110,215 Q380,82 650,240')"/>
+          <circle r="8" class="ball arc-ball b3" style="offset-path:path('M110,215 Q380,-14 650,240')"/>
+
+          <g class="verdict v1"><rect x="300" y="196" width="88" height="22" rx="2" fill="var(--out)"/>
+            <text x="344" y="211" class="s-num" text-anchor="middle">太平 · 坏球</text></g>
+          <g class="verdict v2"><rect x="300" y="96" width="88" height="22" rx="2" fill="var(--turf)"/>
+            <text x="344" y="111" class="s-num" text-anchor="middle">合法 · 可打</text></g>
+          <g class="verdict v3"><rect x="300" y="-34" width="88" height="22" rx="2" fill="var(--out)"/>
+            <text x="344" y="-19" class="s-num" text-anchor="middle">太高 · 坏球</text></g>
+        </svg>
+      </div>
+      <p class="cap">弧线以球离地的最高点计算。裁判目测，判"太平"或"太高"会当场喊出来，这一球算坏球，击球员不必挥棒。</p>
+    </div>
+
+    <h3>一次合法投球要满足什么</h3>
+    <ul class="rules">
+      <li><b>下手投</b>。手必须从腰部以下把球送出，手腕不能高过肘部。上手投和侧投都不合法。</li>
+      <li><b>弧线在 1.83 m 到 5 m 之间</b>。低于人的身高不行，高过三层楼也不行。</li>
+      <li><b>至少一只脚踩在投手板上</b>，投球全程不能离开，出手后才能移动。</li>
+      <li><b>投球前要完全静止</b>至少 1 秒，双手持球停住，然后才开始投。不能连续假动作骗击球员。</li>
+      <li><b>只能向前迈一步</b>，不能助跑，不能跳投。</li>
+    </ul>
+
+    <div class="warn"><strong>新人常见误区</strong>不要以为"慢投 = 随便扔就行"。投得又平又快反而会被判坏球，一直判就白送对方保送。投手要练的是稳定地把球吊进那条高度带里，让它落在本垒板上。</div>
+
+    <div class="note"><strong>安全提示</strong>投手出手后离击球员只有十几米，是全场最危险的位置。出手瞬间立刻把手套抬到胸前护住脸和身体，这是第一节课就要养成的习惯。</div>
+  </section>
+
+  <!-- 06 -->
+  <section id="s6">
+    <div class="sec-head"><span class="num">06</span><h2>好球与坏球</h2></div>
+    <p class="lede">每次击球都在数两个数：好球（Strike）和坏球（Ball）。3 个好球出局，4 个坏球白送上一垒。</p>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>好球垫 · 落在垫上就是好球</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 0 760 250" role="img" aria-label="好球垫判定示意">
+          <rect x="0" y="0" width="760" height="250" fill="var(--turf-soft)" opacity=".4"/>
+          <!-- 俯视本垒区 -->
+          <g transform="translate(300,70)">
+            <path d="M0,0 h160 v40 l-80,44 l-80,-44 Z" fill="var(--chalk)" stroke="var(--ink-3)" stroke-width="1.5"/>
+            <text x="80" y="30" class="s-txt-s" text-anchor="middle" style="fill:var(--ink-2)">本垒板</text>
+            <rect x="8" y="92" width="144" height="72" fill="var(--optic)" stroke="var(--optic-ink)" stroke-width="1.5"/>
+            <text x="80" y="134" class="s-txt" text-anchor="middle" style="fill:var(--optic-ink)">好球垫</text>
+          </g>
+          <text x="380" y="30" class="s-txt" text-anchor="middle">从上往下看本垒</text>
+
+          <!-- 落点 -->
+          <g class="fadein" style="--dl:.5s"><circle cx="360" cy="180" r="9" class="ball"/>
+            <text x="360" y="212" class="s-txt-s" text-anchor="middle" style="fill:var(--turf-deep)">好球</text></g>
+          <g class="fadein" style="--dl:1.1s"><circle cx="440" cy="128" r="9" class="ball"/>
+            <text x="440" y="60" class="s-txt-s" text-anchor="middle" style="fill:var(--turf-deep)">好球</text></g>
+          <g class="fadein" style="--dl:1.7s"><circle cx="216" cy="170" r="9" class="ball" style="opacity:.6"/>
+            <text x="216" y="202" class="s-txt-s" text-anchor="middle" style="fill:var(--out)">坏球</text></g>
+          <g class="fadein" style="--dl:2.3s"><circle cx="600" cy="200" r="9" class="ball" style="opacity:.6"/>
+            <text x="600" y="232" class="s-txt-s" text-anchor="middle" style="fill:var(--out)">坏球</text></g>
+        </svg>
+      </div>
+      <p class="cap">很多慢投比赛在本垒板后面放一块「好球垫」。球在飞行中碰到本垒板或这块垫子，就是好球，跟击球员的身高无关，判罚干净利落。</p>
+    </div>
+
+    <h3>怎么算好球</h3>
+    <ul class="rules">
+      <li><b>球落在本垒板或好球垫上</b> —— 好球，不管你有没有挥棒。</li>
+      <li><b>挥棒落空</b> —— 好球。</li>
+      <li><b>打成界外球</b> —— 好球，但最多累积到 2 个。</li>
+      <li>其余情况（球飞出垫子范围、弧线太平或太高）都是 <b>坏球</b>。</li>
+    </ul>
+
+    <h3>数到头会怎样</h3>
+    <ul class="rules">
+      <li><b>每个打者上场就是一好一坏。</b>这是我们联赛的规则，为的是加快节奏。</li>
+      <li><b>3 个好球 = 三振出局。</b>因为开局已有一个，所以再吃两个好球就三振。</li>
+      <li><b>4 个坏球 = 保送</b>，击球员直接走上一垒，不算安打。开局已有一个，所以再来三个坏球就保送。</li>
+      <li><b>两好球之后再打界外球 = 直接出局。</b>这是慢投垒球和棒球最不一样的一条，棒球里可以无限打界外磨投手，慢投不行。</li>
+    </ul>
+
+    <div class="stage" data-auto="0">
+      <div class="stage-bar"><h4>球数模拟器 · 自己点点看</h4><button class="btn" id="cReset">清零</button></div>
+      <div class="count">
+        <div class="scoreboard">
+          <div class="sb-row"><span>好球</span><div class="dots" id="dS"><i></i><i></i><i></i></div></div>
+          <div class="sb-row"><span>坏球</span><div class="dots b" id="dB"><i></i><i></i><i></i><i></i></div></div>
+          <div class="sb-row"><span>出局</span><div class="dots" id="dO"><i></i><i></i><i></i></div></div>
+        </div>
+        <div class="count-side">
+          <p class="count-msg" id="cMsg">每个打者上场就是一好一坏。选一个结果看看球数会怎么变。</p>
+          <div class="count-btns">
+            <button class="btn" data-ev="strike">挥棒落空</button>
+            <button class="btn" data-ev="mat">球落在垫上</button>
+            <button class="btn" data-ev="ball">球没落在垫上</button>
+            <button class="btn" data-ev="foul">打成界外球</button>
+            <button class="btn" data-ev="hit">打进场内</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vary"><strong>各联赛可能不同</strong>有些联赛不用好球垫，改用"膝盖到前肩"的传统好球带；也有联赛让击球员带着 1 好球 1 坏球的球数上场以加快节奏。开赛前问清楚。</div>
+  </section>
+
+  <!-- 07 -->
+  <section id="s7">
+    <div class="sec-head"><span class="num">07</span><h2>击球</h2></div>
+    <p class="lede">站进击球区，等一颗吊进好球垫的球，把它打进界内，然后往一垒跑。</p>
+
+    <h3>站位与挥棒</h3>
+    <ul class="rules">
+      <li><b>双脚必须完全在击球区线内</b>。击球瞬间踩线或踩出格，即使打出安打也判出局。</li>
+      <li><b>禁止触击（短打）</b>。不许轻碰球让它滚出去。违者击球员出局，成死球。</li>
+      <li><b>禁止砍击</b>。不许缩短挥棒幅度、砍向地面制造高弹跳。违者出局。</li>
+      <li><b>必须完整挥棒</b>。慢投垒球要的是实实在在打出去的球。</li>
+      <li>球棒必须是联赛认可的慢投垒球棒，上面有认证标记。<b>不要用棒球棒</b>，棒径和强度都不对。</li>
+    </ul>
+
+    <h3>打出去之后</h3>
+    <ul class="rules">
+      <li><b>界内球</b>：立刻放下球棒往一垒跑。别扔棒，扔出去砸到捕手会被判出局甚至罚离场。</li>
+      <li><b>界外球</b>：算一个好球（已有两好球时直接出局），回来重打。</li>
+      <li><b>被接住的飞球</b>：不管界内界外，只要落地前被接住，击球员就出局。</li>
+      <li><b>击球员被自己打出的界内球打到</b>：击球员出局。所以打完球要往跑垒道跑，别站在原地看。</li>
+      <li><b>投手接到的球</b>：投手也是防守员，他接住飞球同样是出局。</li>
+    </ul>
+
+    <div class="warn"><strong>新人常见误区</strong>打中球之后愣住不跑，是新人损失最多机会的地方。养成一个条件反射：球棒接触到球的瞬间，人就开始跑，跑到一垒之前都不要回头看球飞到哪里。</div>
+  </section>
+
+  <!-- 08 -->
+  <section id="s8">
+    <div class="sec-head"><span class="num">08</span><h2>界内与界外</h2></div>
+    <p class="lede">从本垒出发，经过一垒和三垒延伸出去的两条粉线，把世界分成"算数"和"不算数"。</p>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>六个落点，哪些算界内</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 0 760 470" role="img" aria-label="界内界外判定示意">
+          <rect x="0" y="0" width="760" height="470" fill="var(--surface-2)"/>
+          <path d="M380,430 L90,140 A410,410 0 0 1 670,140 Z" class="s-turf"/>
+          <path d="M380,448 L520,308 A198,198 0 0 0 240,308 Z" class="s-clay"/>
+          <path d="M380,430 L90,140" class="s-chalk"/>
+          <path d="M380,430 L670,140" class="s-chalk"/>
+          <path d="M90,140 A410,410 0 0 1 670,140" fill="none" stroke="var(--turf)" stroke-width="2.5" stroke-dasharray="7 5"/>
+          <line x1="90" y1="140" x2="82" y2="108" stroke="var(--optic)" stroke-width="4"/>
+          <line x1="670" y1="140" x2="678" y2="108" stroke="var(--optic)" stroke-width="4"/>
+          <text x="380" y="418" class="s-txt-s" text-anchor="middle">本垒</text>
+          <text x="150" y="410" class="s-txt">界外</text>
+          <text x="580" y="410" class="s-txt">界外</text>
+          <text x="380" y="210" class="s-txt" text-anchor="middle">界内</text>
+
+          <g class="fadein" style="--dl:.4s"><circle cx="330" cy="300" r="8" class="ball"/>
+            <text x="330" y="286" class="s-txt-s" text-anchor="middle" style="fill:var(--turf-deep)">界内 · 有效</text></g>
+          <g class="fadein" style="--dl:1s"><circle cx="200" cy="380" r="8" class="ball" style="opacity:.55"/>
+            <text x="200" y="366" class="s-txt-s" text-anchor="middle" style="fill:var(--out)">界外</text></g>
+          <g class="fadein" style="--dl:1.6s"><circle cx="243" cy="293" r="8" class="ball"/>
+            <text x="176" y="264" class="s-txt-s" text-anchor="middle" style="fill:var(--turf-deep)">压线 · 算界内</text></g>
+          <g class="fadein" style="--dl:2.2s"><circle cx="560" cy="240" r="8" class="ball"/>
+            <text x="560" y="226" class="s-txt-s" text-anchor="middle" style="fill:var(--turf-deep)">界内 · 有效</text></g>
+          <g class="fadein" style="--dl:2.8s"><circle cx="380" cy="96" r="8" class="ball"/>
+            <text x="380" y="82" class="s-txt-s" text-anchor="middle" style="fill:var(--turf-deep)">越过围栏 · 全垒打</text></g>
+          <g class="fadein" style="--dl:3.4s"><circle cx="678" cy="118" r="8" class="ball"/>
+            <text x="640" y="96" class="s-txt-s" text-anchor="middle" style="fill:var(--turf-deep)">擦界外杆 · 全垒打</text></g>
+        </svg>
+      </div>
+      <p class="cap">粉线本身属于界内。球压在线上、打中界外杆、或从界外杆内侧飞出围栏，全都算界内。</p>
+    </div>
+
+    <ul class="rules">
+      <li><b>看球第一次落地或被碰到的地方</b>，不看它最后停在哪。落在界内之后滚出界，仍是界内球。</li>
+      <li><b>内场滚地球特殊</b>：如果球在经过一垒或三垒之前滚出界，是界外球；经过之后再出界，是界内球。</li>
+      <li><b>高飞球看落点</b>：无论中途飞过哪里，看它落地那一刻在线的哪一侧。</li>
+      <li><b>界外飞球被接住 = 出局</b>。防守球员可以冲进界外区接球。</li>
+      <li><b>线是界内的一部分</b>，压线算界内。垒包也一样，球碰到垒包就是界内球。</li>
+    </ul>
+  </section>
+
+  <!-- 09 -->
+  <section id="s9">
+    <div class="sec-head"><span class="num">09</span><h2>跑垒</h2></div>
+    <p class="lede">慢投垒球不许偷垒。球被打中之前，跑垒员的脚必须一直粘在垒包上。</p>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>什么时候可以起跑</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 0 760 230" role="img" aria-label="离垒时机对比">
+          <!-- 左：违规 -->
+          <g>
+            <rect x="16" y="16" width="352" height="198" rx="3" fill="var(--clay-soft)" stroke="var(--out)"/>
+            <text x="34" y="42" class="s-txt" style="fill:var(--out)">提前离垒</text>
+            <rect x="52" y="128" width="18" height="18" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 61 137)"/>
+            <text x="61" y="172" class="s-txt-s" text-anchor="middle">一垒</text>
+            <circle cx="61" cy="112" r="10" class="runner mv" style="--tx:78px;--ty:0px;--d:.9s"/>
+            <path d="M92,112 L150,112" stroke="var(--out)" stroke-width="1.5" stroke-dasharray="4 3"/>
+            <circle cx="300" cy="80" r="8" class="ball"/>
+            <text x="300" y="62" class="s-txt-s" text-anchor="middle">球还在飞</text>
+            <g class="fadein" style="--dl:1.1s">
+              <rect x="190" y="150" width="160" height="26" rx="2" fill="var(--out)"/>
+              <text x="270" y="168" class="s-num" text-anchor="middle">跑垒员出局</text>
+            </g>
+          </g>
+          <!-- 右：合法 -->
+          <g>
+            <rect x="392" y="16" width="352" height="198" rx="3" fill="var(--turf-soft)" stroke="var(--turf)"/>
+            <text x="410" y="42" class="s-txt" style="fill:var(--turf-deep)">等球被打中</text>
+            <rect x="428" y="128" width="18" height="18" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 437 137)"/>
+            <text x="437" y="172" class="s-txt-s" text-anchor="middle">一垒</text>
+            <circle cx="437" cy="112" r="10" class="runner mv" style="--tx:96px;--ty:0px;--d:.9s;--dl:.8s"/>
+            <circle cx="600" cy="96" r="8" class="ball mv" style="--tx:100px;--ty:-46px;--d:.8s"/>
+            <text x="600" y="76" class="s-txt-s" text-anchor="middle">球棒击中</text>
+            <g class="fadein" style="--dl:1.7s">
+              <rect x="566" y="150" width="160" height="26" rx="2" fill="var(--turf)"/>
+              <text x="646" y="168" class="s-num" text-anchor="middle">合法起跑</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <p class="cap">正式规则写的是"球到达本垒板之前不得离垒"，多数业余联赛干脆简化成："听到球棒响了再跑"。按后者做永远不会犯规。</p>
+    </div>
+
+    <h3>跑垒的基本规矩</h3>
+    <ul class="rules">
+      <li><b>不能偷垒。</b>球没被打中，你就得回到垒上待着。</li>
+      <li><b>一个垒包上只能站一个人。</b>两个人挤在同一个垒上，后到的那个出局（除非前面那个被迫必须离开）。</li>
+      <li><b>不能超越前面的跑垒员。</b>超越了，超越的人出局。</li>
+      <li><b>跑垒路线不能随便偏离。</b>躲触杀时左右偏出约 1 米就会被判出局。</li>
+      <li><b>飞球被接住要回垒补踩（Tag Up）。</b>球被接住的那一刻你必须踩在原来的垒上，之后才能跑下一个垒。没补踩就跑，防守只要把球传回那个垒踩一下，你就出局。</li>
+      <li><b>跑过一垒可以不停</b>。冲过一垒后只要不做出跑向二垒的意图，就可以安全走回来。这是唯一一个"冲过头不会被触杀"的垒。</li>
+      <li><b>被界内球打中的跑垒员出局</b>。球打到身上要立刻躲，别去挡。</li>
+    </ul>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>封杀与触杀的区别</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 0 760 250" role="img" aria-label="封杀与触杀对比">
+          <g>
+            <rect x="16" y="16" width="352" height="218" rx="3" fill="var(--surface-2)" stroke="var(--line-2)"/>
+            <text x="34" y="42" class="s-txt">封杀 Force Out</text>
+            <text x="34" y="60" class="s-txt-s">跑垒员被迫必须前进</text>
+            <rect x="292" y="150" width="20" height="20" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 302 160)"/>
+            <text x="302" y="196" class="s-txt-s" text-anchor="middle">一垒</text>
+            <circle cx="70" cy="160" r="10" class="runner mv" style="--tx:190px;--ty:0px;--d:1.3s"/>
+            <text x="70" y="140" class="s-txt-s" text-anchor="middle">跑者</text>
+            <circle cx="302" cy="160" r="11" class="fielder"/>
+            <circle cx="180" cy="70" r="7" class="ball mv" style="--tx:112px;--ty:78px;--d:.85s;--dl:.15s"/>
+            <g class="fadein" style="--dl:1.2s">
+              <rect x="76" y="204" width="232" height="24" rx="2" fill="var(--turf)"/>
+              <text x="192" y="221" class="s-num" text-anchor="middle">防守踩住垒包即可 · 出局</text>
+            </g>
+          </g>
+          <g>
+            <rect x="392" y="16" width="352" height="218" rx="3" fill="var(--surface-2)" stroke="var(--line-2)"/>
+            <text x="410" y="42" class="s-txt">触杀 Tag Out</text>
+            <text x="410" y="60" class="s-txt-s">跑垒员没有被迫前进</text>
+            <rect x="668" y="150" width="20" height="20" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 678 160)"/>
+            <text x="678" y="196" class="s-txt-s" text-anchor="middle">三垒</text>
+            <circle cx="446" cy="160" r="10" class="runner mv" style="--tx:186px;--ty:0px;--d:1.3s"/>
+            <circle cx="654" cy="160" r="11" class="fielder mv" style="--tx:-18px;--ty:0px;--d:.5s;--dl:1s"/>
+            <circle cx="556" cy="70" r="7" class="ball mv" style="--tx:92px;--ty:82px;--d:.85s;--dl:.15s"/>
+            <g class="fadein" style="--dl:1.6s">
+              <rect x="452" y="204" width="232" height="24" rx="2" fill="var(--clay)"/>
+              <text x="568" y="221" class="s-num" text-anchor="middle">必须拿球碰到跑者身体</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <p class="cap">判断方法只有一句话：后面有人把你顶着，你没有退路，就是封杀，防守踩垒就行；你可以退回原来的垒，就是触杀，防守必须碰到你。</p>
+    </div>
+
+    <div class="note"><strong>怎么判断"被迫"</strong>击球员打出界内球后必须跑向一垒，所以一垒上的跑者被顶走，一垒永远是封杀。如果一二垒都有人，那一垒二垒都是封杀。垒上只有二垒有人时，他没被顶，去三垒就得被触杀。</div>
+  </section>
+
+  <!-- 10 -->
+  <section id="s10">
+    <div class="sec-head"><span class="num">10</span><h2>一垒的延长板</h2></div>
+    <p class="lede">一垒有两块垒包并排，一块在界内、一块在界外。按位置分工，不看颜色。这条规则存在的唯一理由是防止撞人。</p>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>橙色归你，白色归他</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 0 760 280" role="img" aria-label="双色一垒使用方式">
+          <rect x="0" y="0" width="760" height="280" fill="var(--clay-soft)" opacity=".5"/>
+          <!-- 垒线 -->
+          <line x1="60" y1="112" x2="700" y2="112" stroke="var(--chalk)" stroke-width="3"/>
+          <text x="80" y="100" class="s-txt-s">界内侧</text>
+          <text x="80" y="132" class="s-txt-s">界外侧 · 跑垒道</text>
+          <line x1="60" y1="176" x2="480" y2="176" stroke="var(--chalk)" stroke-width="2" stroke-dasharray="6 4"/>
+
+          <!-- 垒包 -->
+          <rect x="470" y="84" width="56" height="56" fill="var(--chalk)" stroke="var(--ink-3)" stroke-width="1.5"/>
+          <text x="498" y="70" class="s-txt-s" text-anchor="middle">白色 · 防守用</text>
+          <rect x="470" y="140" width="56" height="56" fill="var(--safe)" stroke="var(--ink-3)" stroke-width="1.5"/>
+          <text x="498" y="216" class="s-txt-s" text-anchor="middle" style="fill:var(--safe)">橙色 · 跑垒员用</text>
+
+          <!-- 跑者沿界外侧 -->
+          <circle cx="120" cy="168" r="12" class="runner mv" style="--tx:378px;--ty:0px;--d:1.4s"/>
+          <text x="120" y="146" class="s-txt-s" text-anchor="middle">跑垒员</text>
+          <!-- 防守踩白包接球 -->
+          <circle cx="560" cy="60" r="13" class="fielder mv" style="--tx:-62px;--ty:52px;--d:.7s;--dl:.5s"/>
+          <text x="588" y="44" class="s-txt-s">一垒手</text>
+          <circle cx="300" cy="30" r="8" class="ball mv" style="--tx:198px;--ty:80px;--d:.8s;--dl:.4s"/>
+
+          <g class="fadein" style="--dl:1.7s">
+            <rect x="556" y="120" width="188" height="26" rx="2" fill="var(--turf)"/>
+            <text x="650" y="138" class="s-num" text-anchor="middle">两条路线不交叉</text>
+          </g>
+        </svg>
+      </div>
+      <p class="cap">跑垒员始终走界外侧那条跑垒道，踩界外那块；一垒手踩界内那块接球。两个人各走各的，谁也不会撞到谁。</p>
+    </div>
+
+    <ul class="rules">
+      <li><b>防守只能踩界内那块。</b>一垒手踩界外那块接球，这个封杀不成立。</li>
+      <li><b>打者踩哪块都行</b>，但为了安全，建议一律踩<b>界外那块</b>。</li>
+      <li><b>已经安全上垒之后，站界内那块。</b>界外那块只在"第一次冲一垒"这一下用。</li>
+      <li><b>我们的场地两块可能都是白色</b>，别靠颜色认，靠位置认：界外一侧是跑者的。</li>
+    </ul>
+
+    <div class="vary"><strong>我们的场地</strong>受条件限制，延长板可能不是橙色，两块都是白的。判断标准始终是位置：界内归防守，界外归跑者。</div>
+  </section>
+
+  <!-- 11 -->
+  <section id="s11">
+    <div class="sec-head"><span class="num">11</span><h2>得分线与本垒</h2></div>
+    <p class="lede">本垒是全场最容易发生冲撞的地方，所以慢投垒球把"得分"和"防守"也分成了两个不同的点。</p>
+
+    <div class="stage">
+      <div class="stage-bar"><h4>过了线就不能回头</h4><button class="btn" data-replay>重放</button></div>
+      <div class="stage-body">
+        <svg viewBox="0 0 760 300" role="img" aria-label="得分线与得分板示意">
+          <rect x="0" y="0" width="760" height="300" fill="var(--clay-soft)" opacity=".5"/>
+          <!-- 三垒到本垒 -->
+          <line x1="80" y1="120" x2="600" y2="120" stroke="var(--chalk)" stroke-width="3"/>
+          <rect x="62" y="102" width="24" height="24" fill="var(--chalk)" stroke="var(--ink-3)" transform="rotate(45 74 114)"/>
+          <text x="74" y="166" class="s-txt-s" text-anchor="middle">三垒</text>
+          <!-- 本垒板 -->
+          <path d="M576,102 h40 l0,22 l-20,20 l-20,-20 Z" fill="var(--chalk)" stroke="var(--ink-3)" stroke-width="1.5"/>
+          <text x="596" y="92" class="s-txt-s" text-anchor="middle">本垒板 · 防守踩这里</text>
+          <!-- 得分板 -->
+          <rect x="572" y="182" width="48" height="34" fill="var(--safe)" stroke="var(--ink-3)" stroke-width="1.5"/>
+          <text x="596" y="236" class="s-txt-s" text-anchor="middle" style="fill:var(--safe)">得分板 · 跑者踩这里</text>
+          <!-- 得分线 -->
+          <line x1="420" y1="96" x2="420" y2="250" stroke="var(--safe)" stroke-width="3" stroke-dasharray="9 5"/>
+          <text x="420" y="84" class="s-txt" text-anchor="middle" style="fill:var(--safe)">得分线</text>
+          <text x="420" y="270" class="s-txt-s" text-anchor="middle">距本垒约 3 m</text>
+          <!-- 跑垒道向下偏 -->
+          <path d="M96,132 L420,132 L596,196" fill="none" stroke="var(--chalk)" stroke-width="2" stroke-dasharray="6 4"/>
+          <circle cx="110" cy="132" r="12" class="runner mv" style="--tx:300px;--ty:0px;--d:1.2s"/>
+          <circle cx="440" cy="140" r="12" class="runner mv fadein" style="--tx:150px;--ty:52px;--d:.9s;--dl:1.2s;animation:mvk .9s 1.2s forwards"/>
+
+          <g class="fadein" style="--dl:2.2s">
+            <rect x="440" y="252" width="300" height="26" rx="2" fill="var(--turf)"/>
+            <text x="590" y="270" class="s-num" text-anchor="middle">踩白板或黑垫 · 得 1 分</text>
+          </g>
+          <g class="fadein" style="--dl:1.3s">
+            <rect x="240" y="200" width="164" height="24" rx="2" fill="var(--out)"/>
+            <text x="322" y="217" class="s-num" text-anchor="middle">过线后不许退回</text>
+          </g>
+        </svg>
+      </div>
+      <p class="cap">跑垒员一旦越过得分线，就只能继续往前冲，不能再退回三垒。这样防守就不用堵在本垒跟人抢位置，只要接到球踩本垒板即可。</p>
+    </div>
+
+    <ul class="rules">
+      <li><b>跑垒员踩白色本垒板或黑色好球垫都算得分。</b>只有满垒保送挤回来的那一分，必须踩白板。</li>
+      <li><b>防守封杀只能踩白色本垒板。</b></li>
+      <li><b>越过得分线就不能返回三垒。</b>返回了，防守踩本垒板即出局。</li>
+      <li><b>本垒的封杀不需要触杀</b>：跑者回本垒时永远是被迫的（后面有人推），防守持球踩本垒板就出局。</li>
+    </ul>
+
+    <div class="vary"><strong>我们联赛</strong>得分线距本垒约 3 m，过线不能退回三垒。本垒是白色本垒板加黑色好球垫，跑者踩哪块都算得分，防守封杀只能踩白板。禁止滑垒和冲撞。</div>
+
+    <div class="warn"><strong>安全红线</strong>绝大多数业余慢投联赛<b>禁止滑垒</b>，也绝对禁止冲撞防守球员。判断跑不到就减速停下，一个出局远比一次受伤便宜。</div>
+  </section>
+
+  <!-- 12 -->
+  <section id="s12">
+    <div class="sec-head"><span class="num">12</span><h2>出局的方式</h2></div>
+    <p class="lede">防守方攒够三个出局就能换攻。以下是你在球场上真的会看到的所有出局方式。</p>
+
+    <div class="outs">
+      <div><b data-n="01">三振</b><small>击球员被记满 3 个好球。</small></div>
+      <div><b data-n="02">接杀</b><small>击出的球在落地前被防守接住，界内界外都算。</small></div>
+      <div><b data-n="03">封杀</b><small>被迫前进的跑垒员还没到垒，防守持球先踩到那个垒。</small></div>
+      <div><b data-n="04">触杀</b><small>跑垒员不在垒上时，被持球的防守球员碰到身体。</small></div>
+      <div><b data-n="05">两好球后界外</b><small>慢投垒球特有，两好球之后再打出界外球直接出局。</small></div>
+      <div><b data-n="06">触击或砍击</b><small>做出这两个被禁止的动作，击球员立即出局。</small></div>
+      <div><b data-n="07">踩出击球区</b><small>击球瞬间有脚踩在击球区线外。</small></div>
+      <div><b data-n="08">被界内球打中</b><small>跑垒员在界内被击出的球打到身体。</small></div>
+      <div><b data-n="09">偏离跑垒路线</b><small>为躲触杀左右偏出约 1 米以上。</small></div>
+      <div><b data-n="10">超越前位跑垒员</b><small>后面的人跑到了前面的人前头，后面那个出局。</small></div>
+      <div><b data-n="11">未补踩就跑</b><small>飞球被接住时人已离垒，防守把球传回该垒踩一下。</small></div>
+      <div><b data-n="12">打序错误</b><small>不该你打的时候你上场打了，判出局且成绩取消。</small></div>
+      <div><b data-n="13">妨碍防守</b><small>跑垒员故意挡住正在处理球的防守球员。</small></div>
+      <div><b data-n="14">内野高飞球</b><small>无人出局或一人出局、且一二垒有人时，内场可轻松接住的高飞球，无论接没接住击球员都出局。防止防守故意漏接制造双杀。</small></div>
+    </div>
+
+    <div class="note"><strong>进阶，第一节课不用背</strong>第 14 条内野高飞球规则听起来绕，实际比赛中裁判会当场举手喊出来，你只要照常跑垒即可。有个印象就够了。</div>
+  </section>
+
+  <!-- 13 -->
+  <section id="s13">
+    <div class="sec-head"><span class="num">13</span><h2>得分与胜负</h2></div>
+    <p class="lede">跑垒员安全回到本垒就得一分。分数没有大小之分，全垒打和拼命跑回来的一分完全相等。</p>
+
+    <ul class="rules">
+      <li><b>一次绕完四个垒 = 1 分。</b>必须依次踩过一垒、二垒、三垒，漏踩了防守可以申诉把你判出局。</li>
+      <li><b>第三个出局发生时，这一分要看情况。</b>如果第三个出局是封杀或接杀造成的，即使跑者在出局之前踩到了本垒，这一分也不算。</li>
+      <li><b>全垒打</b>：把球打出外场围栏（在界外杆内侧），击球员和所有垒上的人一起绕场得分。四个人都在垒上时打出的叫"满贯全垒打"，一次得 4 分。</li>
+      <li><b>场内全垒打</b>：球没出围栏，但跑得够快绕完一圈，同样算全垒打。</li>
+      <li><b>时间到或七局结束，分高者胜。</b>平局就是平局，不加赛。</li>
+    </ul>
+
+    <h3>看懂记分板</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>栏目</th><th>含义</th></tr></thead>
+        <tbody>
+          <tr><td>R</td><td>Runs，得分。就是最终比的这个数。</td></tr>
+          <tr><td>H</td><td>Hits，安打数。靠打击上垒的次数，不含保送和失误。</td></tr>
+          <tr><td>E</td><td>Errors，失误数。防守本该接住却没接住、传丢球的次数。</td></tr>
+          <tr><td>LOB</td><td>Left On Base，残垒。换攻时还留在垒上没回来的人数。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="vary"><strong>我们联赛</strong>全垒打不限支数。其他联赛常限制每队每场最多几支，超出的算界外或直接判出局。
+  </section>
+
+  <!-- 14 -->
+  <section id="s14">
+    <div class="sec-head"><span class="num">14</span><h2>死球与安全进垒</h2></div>
+    <p class="lede">有些情况裁判会叫停比赛，这叫死球。死球期间没人可以跑，也没人会被杀出局。</p>
+
+    <h3>常见的死球情形</h3>
+    <ul class="rules">
+      <li><b>界外球</b>：球落到界外或被界外接住后没有后续。</li>
+      <li><b>球飞出比赛区域</b>：进入观众席、越过挡网、滚进器材区。</li>
+      <li><b>裁判暂停</b>：受伤、争议、器材问题。</li>
+      <li><b>击球员被投球打中</b>：慢投垒球球速慢，通常只判坏球，不像棒球那样自动上一垒。</li>
+      <li><b>触击、砍击、打序错误</b>等违例发生时。</li>
+    </ul>
+
+    <h3>死球之后跑垒员去哪</h3>
+    <ul class="rules">
+      <li><b>传球传丢出界（防守失误）</b>：所有跑垒员从失误发生那一刻所在的位置往前推两个垒。</li>
+      <li><b>界内球弹出围栏或卡住</b>：判两垒安打，击球员上二垒，其他人各推两个垒。</li>
+      <li><b>防守妨碍跑垒</b>：防守球员没持球却挡住跑垒路线，裁判把跑垒员判到"他本来能到达"的垒。</li>
+      <li><b>投手违例投球</b>：判一个坏球，垒上跑者不动。</li>
+    </ul>
+
+    <div class="note"><strong>实战建议</strong>听到裁判喊"Dead ball / 死球"或看到双手举起，立刻停下来，站在原地等裁判指示。这时候继续跑是没有意义的，还可能被判违例。</div>
+  </section>
+
+  <!-- 15 -->
+  <section id="s15">
+    <div class="sec-head"><span class="num">15</span><h2>混合队规则</h2></div>
+    <p class="lede">慢投垒球最常见的形式是男女混合。下面是我们联赛的规定。</p>
+
+    <ul class="rules">
+      <li><b>人数要求</b>：场上 10 人中，任一性别不少于 4 人。</li>
+      <li><b>打序不要求交替</b>：男女不必相间，但排定后全场不变。</li>
+      <li><b>可以加一名 EP</b>：额外打者只进打序、不上场防守。</li>
+      <li><b>保送就是上一垒</b>：我们联赛没有"男子保送自动进二垒"这条。</li>
+      <li><b>女性打击时外野不设限制线</b>。</li>
+    </ul>
+
+    <div class="vary"><strong>其他联赛</strong>这几条在不同联赛差别最大。有的要求男女打序相间，有的规定男子保送直接上二垒，有的给女性打者设外野限制线。换联赛打比赛之前先问清楚。</div>
+  </section>
+
+  <!-- 16 -->
+  <section id="s16">
+    <div class="sec-head"><span class="num">16</span><h2>裁判手势</h2></div>
+    <p class="lede">球场上很吵，判罚主要靠看手势。认得这五个就够用了。</p>
+
+    <div class="signs">
+      <div class="sign">
+        <svg viewBox="0 0 120 100" role="img" aria-label="好球手势">
+          <circle cx="60" cy="22" r="11" fill="var(--ink-2)"/>
+          <path d="M60,34 L60,66" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60,44 L36,58" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60,42 L88,30 L96,42" stroke="var(--clay)" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <path d="M52,66 L46,92 M68,66 L74,92" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <b>好球 Strike</b><small>右手握拳向侧上方顶出</small>
+      </div>
+      <div class="sign">
+        <svg viewBox="0 0 120 100" role="img" aria-label="出局手势">
+          <circle cx="60" cy="22" r="11" fill="var(--ink-2)"/>
+          <path d="M60,34 L60,66" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60,44 L34,54" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60,42 L84,20" stroke="var(--out)" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="88" cy="16" r="8" fill="var(--out)"/>
+          <path d="M52,66 L46,92 M68,66 L74,92" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <b>出局 Out</b><small>握拳向上猛挥一下</small>
+      </div>
+      <div class="sign">
+        <svg viewBox="0 0 120 100" role="img" aria-label="安全上垒手势">
+          <circle cx="60" cy="22" r="11" fill="var(--ink-2)"/>
+          <path d="M60,34 L60,66" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60,44 L20,44 M60,44 L100,44" stroke="var(--turf)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M52,66 L46,92 M68,66 L74,92" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <b>安全 Safe</b><small>双臂向两侧平展</small>
+      </div>
+      <div class="sign">
+        <svg viewBox="0 0 120 100" role="img" aria-label="界外球手势">
+          <circle cx="60" cy="22" r="11" fill="var(--ink-2)"/>
+          <path d="M60,34 L60,66" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60,42 L30,16 M60,42 L90,16" stroke="var(--safe)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M52,66 L46,92 M68,66 L74,92" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <b>界外 Foul</b><small>双臂高举并喊出声</small>
+      </div>
+      <div class="sign">
+        <svg viewBox="0 0 120 100" role="img" aria-label="界内球手势">
+          <circle cx="60" cy="22" r="11" fill="var(--ink-2)"/>
+          <path d="M60,34 L60,66" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+          <path d="M60,44 L26,62" stroke="var(--turf)" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="22" cy="64" r="7" fill="var(--turf)"/>
+          <path d="M52,66 L46,92 M68,66 L74,92" stroke="var(--ink-2)" stroke-width="7" stroke-linecap="round"/>
+        </svg>
+        <b>界内 Fair</b><small>手指向界内，不喊话</small>
+      </div>
+    </div>
+
+    <div class="note"><strong>小窍门</strong>界内球裁判是不出声的，只用手指。所以打完球千万别等裁判喊，没听到声音就是界内，跑就对了。</div>
+  </section>
+
+  <!-- 17 -->
+  <section id="s17">
+    <div class="sec-head"><span class="num">17</span><h2>术语速查</h2></div>
+    <p class="lede">队里交流会混着中英文，这些词听到就能反应过来。</p>
+
+    <div class="gloss">
+      <div><b>安打<em>Hit</em></b><small>靠打击安全上垒，没有借助防守失误。</small></div>
+      <div><b>保送<em>Walk</em></b><small>四个坏球后免费上一垒。</small></div>
+      <div><b>三振<em>Strikeout</em></b><small>三个好球出局。</small></div>
+      <div><b>飞球<em>Fly Ball</em></b><small>打得又高又远的球。</small></div>
+      <div><b>滚地球<em>Ground Ball</em></b><small>贴着地面滚或弹的球。</small></div>
+      <div><b>平飞球<em>Line Drive</em></b><small>又平又快的直线球，最难接。</small></div>
+      <div><b>双杀<em>Double Play</em></b><small>一次守备连续制造两个出局。</small></div>
+      <div><b>残垒<em>LOB</em></b><small>换攻时还留在垒上的跑者。</small></div>
+      <div><b>补踩<em>Tag Up</em></b><small>飞球被接住后回垒重新触垒才能跑。</small></div>
+      <div><b>封杀<em>Force Out</em></b><small>踩垒即可完成的出局。</small></div>
+      <div><b>触杀<em>Tag Out</em></b><small>必须拿球碰到跑者的出局。</small></div>
+      <div><b>失误<em>Error</em></b><small>本该接住或传准却没做到。</small></div>
+      <div><b>牺牲打<em>Sacrifice</em></b><small>自己出局但把队友送上垒或送回本垒。</small></div>
+      <div><b>投手丘<em>Mound</em></b><small>投手站的位置，慢投垒球是平的，只有一个圈。</small></div>
+      <div><b>打点<em>RBI</em></b><small>因为你的这一棒而跑回本垒的分数。</small></div>
+      <div><b>得分线<em>Commitment Line</em></b><small>过线不能返回三垒的那条线。</small></div>
+      <div><b>自由人<em>Rover</em></b><small>慢投垒球第 10 人，机动补位。</small></div>
+      <div><b>好球垫<em>Strike Mat</em></b><small>本垒板后的垫子，球落上去算好球。</small></div>
+    </div>
+  </section>
+
+  <!-- 18 -->
+  <section id="s18">
+    <div class="sec-head"><span class="num">18</span><h2>随堂测验</h2></div>
+    <p class="lede">十道题，每题选完立刻告诉你对错和原因。全部答完看看自己掌握了多少。</p>
+
+    <div class="quiz" id="quiz">
+      <div class="quiz-head">
+        <h4>规则小测</h4>
+        <div class="quiz-score" id="qScore">0 / 10 已答</div>
+      </div>
+      <div id="qBody"></div>
+    </div>
+
+    <div class="note"><strong>下一课</strong>规则过完之后就该上手了：握棒与挥棒、接滚地球的姿势、传球的四个步骤、跑垒的起跑与转弯。带手套和运动鞋来球场，我们直接在场上练。</div>
+  </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="foot-in">
+    <span>慢投垒球新队员规则课 · 内部教学资料</span>
+    <span>规则以本赛季联赛正式规程为准，标橙色的条目请赛前确认。</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- 动画台：进入视口自动播放 + 重放 ---------- */
+  var stages = Array.prototype.slice.call(document.querySelectorAll('.stage'));
+  function run(st){ st.classList.remove('run'); void st.offsetWidth; st.classList.add('run'); }
+
+  stages.forEach(function(st){
+    var btn = st.querySelector('[data-replay]');
+    if(btn) btn.addEventListener('click', function(){ run(st); });
+  });
+
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting && e.target.dataset.auto !== '0' && !e.target.dataset.played){
+          e.target.dataset.played = '1';
+          run(e.target);
+        }
+      });
+    }, {threshold:0.35});
+    stages.forEach(function(s){ io.observe(s); });
+  } else {
+    stages.forEach(function(s){ if(s.dataset.auto!=='0') run(s); });
+  }
+
+  /* ---------- 目录高亮 ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll('#rail a'));
+  var secs  = links.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  function spy(){
+    var y = window.scrollY + 140, idx = 0;
+    secs.forEach(function(s,i){ if(s && s.offsetTop <= y) idx = i; });
+    links.forEach(function(a,i){ a.classList.toggle('on', i===idx); });
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if(ticking) return; ticking = true;
+    requestAnimationFrame(function(){ spy(); ticking = false; });
+  }, {passive:true});
+  spy();
+
+  /* ---------- 防守站位 ---------- */
+  var NAMES = {1:'投手',2:'捕手',3:'一垒手',4:'二垒手',5:'三垒手',6:'游击手',7:'左外野',8:'中外野',9:'右外野',10:'自由人'};
+  var NS = 'http://www.w3.org/2000/svg';
+  Array.prototype.forEach.call(document.querySelectorAll('.fdr'), function(g,i){
+    var n = g.dataset.n, x = +g.dataset.x, y = +g.dataset.y;
+    var c = document.createElementNS(NS,'circle');
+    c.setAttribute('cx',x); c.setAttribute('cy',y); c.setAttribute('r',15);
+    c.setAttribute('class','fielder');
+    var t = document.createElementNS(NS,'text');
+    t.setAttribute('x',x); t.setAttribute('y',y+4); t.setAttribute('text-anchor','middle');
+    t.setAttribute('class','s-num'); t.textContent = n;
+    var l = document.createElementNS(NS,'text');
+    l.setAttribute('x',x); l.setAttribute('y',y+30); l.setAttribute('text-anchor','middle');
+    l.setAttribute('class','s-txt-s'); l.textContent = NAMES[n];
+    g.setAttribute('class','fdr fadein');
+    g.style.setProperty('--dl', (0.12*i)+'s');
+    g.appendChild(c); g.appendChild(t); g.appendChild(l);
+  });
+
+  /* ---------- 记分板柱 ---------- */
+  var sb = document.getElementById('sbcols');
+  if(sb){
+    var away = [0,2,0,1,0,3,0], home = [1,0,0,4,2,0,'-'];
+    for(var i=0;i<7;i++){
+      var x = 96 + i*74;
+      [[38,String(i+1),'#9AA595','10px'],[76,String(away[i]),'#fff','13px'],[100,String(home[i]),'#fff','13px']].forEach(function(r){
+        var t = document.createElementNS(NS,'text');
+        t.setAttribute('x',x); t.setAttribute('y',r[0]); t.setAttribute('text-anchor','middle');
+        t.setAttribute('class','s-num'); t.setAttribute('fill',r[2]);
+        t.style.fontSize = r[3]; t.textContent = r[1];
+        sb.appendChild(t);
+      });
+    }
+    [[76,'6'],[100,'7']].forEach(function(r){
+      var t = document.createElementNS(NS,'text');
+      t.setAttribute('x',676); t.setAttribute('y',r[0]); t.setAttribute('text-anchor','middle');
+      t.setAttribute('class','s-num'); t.setAttribute('fill','var(--optic)');
+      t.style.fontSize='15px'; t.textContent = r[1];
+      sb.appendChild(t);
+    });
+  }
+
+  /* ---------- 球场探索器 ---------- */
+  var ZONES = {
+    home:{en:'HOME PLATE',zh:'本垒板',d:'五角形白板，嵌在地面里，与地面齐平。击球员站在它两侧的击球区打球，跑垒员绕完一圈回到这里就得一分。它是"板"不是"垒包"，不能踩上去站着。',k:[['宽度','43 cm'],['材质','橡胶']]},
+    mat:{en:'STRIKE MAT',zh:'好球垫',d:'放在本垒板正后方的一块垫子。投出的球在飞行中碰到本垒板或这块垫子，就判好球。用它代替传统好球带，判罚一目了然，不会因为击球员高矮产生争议。',k:[['尺寸','约 60 × 90 cm'],['作用','界定好球']]},
+    box:{en:'BATTER’S BOX',zh:'击球区',d:'本垒板两侧各一个方框，击球员必须站在框内。击球瞬间只要有一只脚踩到框线外侧的地面，就算违例出局，哪怕球打得很漂亮。',k:[['尺寸','约 0.9 × 2.1 m'],['左右','各一个']]},
+    mound:{en:'PITCHER’S PLATE',zh:'投手板与投手圈',d:'投手投球时至少一只脚必须踩在投手板上，出手后才能移动。慢投垒球没有隆起的土丘，地面是平的，只画一个圈。投手出手后立刻变成第十名防守员。',k:[['距本垒','15.24 m'],['板长','61 cm']]},
+    first:{en:'FIRST BASE',zh:'一垒（双色垒包）',d:'跑垒员冲一垒时踩橙色那块，一垒手踩白色那块接球，两个人各走一边不会相撞。安全上垒之后再站回白包。冲过一垒可以不停，只要不表现出要去二垒的意图就不会被触杀。',k:[['垒间','19.81 m'],['垒包边长','38 cm']]},
+    second:{en:'SECOND BASE',zh:'二垒',d:'离本垒最远的垒。跑到二垒被称为"得分位置"，因为一支普通安打通常就能把你送回本垒得分。',k:[['距本垒','28 m']]},
+    third:{en:'THIRD BASE',zh:'三垒',d:'离得分只差一步。三垒跑垒员要特别注意飞球的补踩时机，接住之后再跑还是来得及的。',k:[['距本垒','19.81 m']]},
+    commit:{en:'COMMITMENT LINE',zh:'得分线',d:'三垒到本垒之间、离本垒约 3 m 的一条线。跑垒员一旦越过它就不能再退回三垒，只能继续冲向本垒。这条线让本垒不会变成抢位置的碰撞点。',k:[['距本垒','约 3 m'],['方向','不可逆']]},
+    infield:{en:'INFIELD',zh:'内场',d:'四个垒围起来的菱形区域及其周边的红土。六名防守球员在这里处理滚地球和近距离飞球，是比赛节奏最快的地方。',k:[['防守人数','6 人']]},
+    outfield:{en:'OUTFIELD',zh:'外场',d:'内场之外到围栏之间的大片草地。慢投垒球有四名外野手（比棒球多一个自由人），因为球被打到外场的概率很高。',k:[['防守人数','4 人']]},
+    foul:{en:'FOUL TERRITORY',zh:'界外区',d:'两条粉线外侧的区域。球落在这里就是界外球，算一个好球，重打。但防守球员可以冲进界外区接飞球，接住了击球员一样出局。',k:[['线本身','属于界内']]},
+    fence:{en:'OUTFIELD FENCE',zh:'外场围栏',d:'外场的边界。球在界外杆内侧飞越围栏就是全垒打。球弹地之后才越过围栏则判两垒安打，不是全垒打。',k:[['距本垒','约 84 m']]}
+  };
+  var order = ['home','mat','box','mound','first','second','third','commit','infield','outfield','foul','fence'];
+  var fen=document.getElementById('fen'), fzh=document.getElementById('fzh'),
+      fdesc=document.getElementById('fdesc'), fdl=document.getElementById('fdl'),
+      fchips=document.getElementById('fchips');
+
+  function showZone(k){
+    var z = ZONES[k]; if(!z) return;
+    fen.textContent = z.en; fzh.textContent = z.zh; fdesc.textContent = z.d;
+    fdl.innerHTML = '';
+    (z.k||[]).forEach(function(p){
+      var dt=document.createElement('dt'); dt.textContent=p[0];
+      var dd=document.createElement('dd'); dd.textContent=p[1];
+      fdl.appendChild(dt); fdl.appendChild(dd);
+    });
+    document.querySelectorAll('.hot').forEach(function(h){ h.classList.toggle('on', h.dataset.k===k); });
+    document.querySelectorAll('#fchips .chip').forEach(function(c){ c.setAttribute('aria-pressed', String(c.dataset.k===k)); });
+  }
+  if(fchips){
+    order.forEach(function(k){
+      var b=document.createElement('button');
+      b.className='chip'; b.dataset.k=k; b.textContent=ZONES[k].zh;
+      b.setAttribute('aria-pressed', String(k==='home'));
+      b.addEventListener('click',function(){ showZone(k); });
+      fchips.appendChild(b);
+    });
+    document.querySelectorAll('.hot').forEach(function(h){
+      h.addEventListener('click',function(){ showZone(h.dataset.k); });
+      h.addEventListener('mouseenter',function(){ showZone(h.dataset.k); });
+    });
+    showZone('home');
+  }
+
+  /* ---------- 球数模拟器 ---------- */
+  var S=1,B=1,O=0;
+  var dS=document.getElementById('dS'), dB=document.getElementById('dB'),
+      dO=document.getElementById('dO'), cMsg=document.getElementById('cMsg');
+  function paint(){
+    if(!dS) return;
+    [[dS,S],[dB,B],[dO,O]].forEach(function(p){
+      Array.prototype.forEach.call(p[0].children,function(i,idx){ i.classList.toggle('lit', idx<p[1]); });
+    });
+  }
+  function say(txt,cls){ cMsg.textContent = txt; cMsg.className = 'count-msg' + (cls?' '+cls:''); }
+  function addOut(){ O = Math.min(3,O+1); S=1; B=1; }
+  function handle(ev){
+    if(O>=3){ say('已经三人出局，这一局结束了。点「清零」重新开始。','bad'); paint(); return; }
+    if(ev==='strike'||ev==='mat'){
+      S++;
+      if(S>=3){ addOut(); say(ev==='mat'?'球落在好球垫上，第三个好球 —— 三振出局。':'挥棒落空，第三个好球 —— 三振出局。','bad'); }
+      else say((ev==='mat'?'球落在好球垫上，判好球。':'挥棒落空，判好球。')+'现在 '+S+' 好球 '+B+' 坏球。');
+    } else if(ev==='ball'){
+      B++;
+      if(B>=4){ say('第四个坏球 —— 保送上一垒，换下一棒，球数回到一好一坏。','hit'); S=1;B=1; }
+      else say('球没碰到本垒板或好球垫，判坏球。现在 '+S+' 好球 '+B+' 坏球。');
+    } else if(ev==='foul'){
+      if(S>=2){ addOut(); say('两好球之后再打界外球，直接出局。这是慢投垒球和棒球最大的差别之一。','bad'); }
+      else { S++; say('界外球记一个好球。现在 '+S+' 好球 '+B+' 坏球。注意：两好球之后再打界外就出局了。'); }
+    } else if(ev==='hit'){
+      say('球打进界内，立刻放下球棒冲一垒。接下来是跑垒和防守的事了。','hit'); S=1;B=1;
+    }
+    paint();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ev]'),function(b){
+    b.addEventListener('click',function(){ handle(b.dataset.ev); });
+  });
+  var cr=document.getElementById('cReset');
+  if(cr) cr.addEventListener('click',function(){ S=1;B=1;O=0; say('回到新打者：一好一坏，零出局。'); paint(); });
+  paint();
+
+  /* ---------- 测验 ---------- */
+  var QS = [
+    {q:'投手把球投得又低又快，像棒球那样直冲本垒。裁判会怎么判？',
+     o:['判好球，因为球经过了本垒板','判坏球，弧线没达到最低高度','判违例，投手被罚出场','不判，球速不影响判罚'],a:1,
+     w:'我们联赛要求球的最高点在离地 1.83 m 到 5 m 之间。太平的球即使穿过本垒板也是坏球，击球员不用挥棒。'},
+    {q:'两好球之后，击球员打出一个界外球。结果是？',
+     o:['继续打，界外球不再累计好球','记第三个好球，三振出局','直接出局','算坏球'],a:2,
+     w:'慢投垒球里两好球之后再打界外球直接出局。棒球可以一直打界外磨投手，这里不行。'},
+    {q:'投手刚出手，球还在空中飞，一垒跑垒员就冲向二垒。',
+     o:['合法，出手后就能跑','跑垒员出局，慢投垒球禁止偷垒','要看跑得多快','判投手违例'],a:1,
+     w:'慢投垒球不许偷垒。最保险的做法是听到球棒击中球的声音再起跑。'},
+    {q:'击球员打出界内滚地球冲向一垒，他应该踩哪块垒包？',
+     o:['白色的','橙色的','哪块都行','先踩白色再踩橙色'],a:1,
+     w:'橙色给跑垒员，白色给防守。两个人各走一条线，避免在一垒发生碰撞。'},
+    {q:'外野手接住一个高飞球时，二垒跑垒员已经跑到了二三垒之间。他要怎么做才能安全？',
+     o:['直接冲三垒，越快越好','回二垒重新踩一下，再决定跑不跑','站在原地不动','喊暂停'],a:1,
+     w:'飞球被接住时跑垒员必须踩在原来的垒上，这叫补踩。没补踩就跑，防守把球传回二垒踩一下就出局。'},
+    {q:'跑垒员已经越过得分线，跑到一半发现回三垒更安全。他可以退回去吗？',
+     o:['可以，随时能退','不可以，过线之后只能往前','要看防守有没有接到球','可以，但要绕开防守'],a:1,
+     w:'得分线的意义就是"不可逆"。过线后退回三垒，防守持球踩本垒板即判出局。'},
+    {q:'一垒有人，击球员打出滚地球。防守把球传给一垒手，一垒手踩住白包时跑垒员还没到。这是哪种出局？',
+     o:['触杀，必须碰到跑者','封杀，踩垒即可','接杀','不算出局'],a:1,
+     w:'击球员打出界内球后必须跑向一垒，所以一垒的跑者被顶走，属于被迫前进，踩垒就能出局，不需要碰人。'},
+    {q:'关于慢投垒球的防守人数和位置，哪个说法是对的？',
+     o:['9 人，和棒球一样','10 人，多一个自由人','11 人，内外场各加一人','人数不限'],a:1,
+     w:'慢投垒球防守 10 人：6 个内场（含投手捕手）加 4 个外场，多出来的那个叫自由人，站在内外场之间补空当。'},
+    {q:'击球员用轻碰的方式把球点向投手前方的地面。',
+     o:['好战术，防守很难处理','触击被禁止，击球员出局','算界内球，正常跑垒','算界外球'],a:1,
+     w:'慢投垒球禁止触击和砍击，目的是保证每一球都是完整挥棒打出去的。违者击球员直接出局。'},
+    {q:'时间还剩五分钟，第七局上半打完，主队已经领先 5 分。接下来会发生什么？',
+     o:['照常打完下半局','比赛直接结束，主队获胜','要加赛一局','双方各再打一轮打序'],a:1,
+     w:'主队是后攻方。上半局结束时主队已经领先，再打下半局也不会改变结果，比赛就此结束。何况距离结束不足十分钟，本来也不开新局了。'}
+  ];
+  var qBody=document.getElementById('qBody'), qScore=document.getElementById('qScore'), answered=0, right=0;
+  if(qBody){
+    QS.forEach(function(item,qi){
+      var wrap=document.createElement('div'); wrap.className='q';
+      var p=document.createElement('p');
+      var b=document.createElement('b'); b.textContent='Q'+(qi+1);
+      p.appendChild(b); p.appendChild(document.createTextNode(item.q));
+      wrap.appendChild(p);
+      var ol=document.createElement('div'); ol.className='opts';
+      var why=document.createElement('div'); why.className='why'; why.textContent=item.w;
+      item.o.forEach(function(txt,oi){
+        var btn=document.createElement('button');
+        btn.className='opt'; btn.type='button';
+        btn.textContent=String.fromCharCode(65+oi)+'.  '+txt;
+        btn.addEventListener('click',function(){
+          if(wrap.dataset.done) return;
+          wrap.dataset.done='1'; answered++;
+          if(oi===item.a) right++;
+          Array.prototype.forEach.call(ol.children,function(c,ci){
+            c.disabled=true;
+            if(ci===item.a) c.classList.add('right');
+            else if(ci===oi) c.classList.add('wrong');
+          });
+          why.classList.add('show');
+          qScore.textContent = answered<QS.length
+            ? (answered+' / '+QS.length+' 已答 · 答对 '+right)
+            : ('全部答完 · 答对 '+right+' / '+QS.length+(right>=8?' 可以上场了':'  建议回头再看一遍'));
+        });
+        ol.appendChild(btn);
+      });
+      wrap.appendChild(ol); wrap.appendChild(why);
+      qBody.appendChild(wrap);
+    });
+    qScore.textContent = '0 / '+QS.length+' 已答';
+  }
+})();
+</script>

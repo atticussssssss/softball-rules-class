@@ -1,0 +1,472 @@
+<meta charset="utf-8">
+<title>规则课单方面补充</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+
+<style>
+:root{
+  --bg:#F3F4EE; --bg2:#E8EBE1; --card:#FFFFFF;
+  --ink:#1A2119; --ink2:#4B564A; --ink3:#7A8477; --line:#CBD1C1;
+  --def:#1F5E36; --run:#C8553A; --clay:#B4573C; --out:#C4302B;
+  --fd:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  --fb:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  font-size:clamp(13px, 0.52vw + 0.78vh, 19px);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2.5px solid var(--clay);outline-offset:2px}
+
+#page{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%}
+header{display:flex;align-items:center;gap:1.4rem;padding:1.1rem 2.2rem;
+  border-bottom:1px solid var(--line);background:var(--card)}
+.brand{display:grid;gap:.15rem;margin-right:auto}
+.brand b{font-family:var(--fd);font-weight:900;font-size:1.3rem;letter-spacing:-.01em}
+.brand small{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.2em;color:var(--clay)}
+.hkeys{font-family:var(--fd);font-size:.74rem;color:var(--ink3);letter-spacing:.04em}
+.hkeys kbd{font-family:var(--fd);font-size:.72rem;border:1px solid var(--line);border-radius:3px;
+  padding:.05rem .38rem;background:var(--bg);color:var(--ink2);margin:0 .2rem}
+
+main{display:grid;grid-template-columns:30rem minmax(0,1fr);min-height:0}
+aside{border-right:1px solid var(--line);background:var(--bg2);min-height:0;
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:1.2rem 1.6rem .9rem}
+.tab{font-family:var(--fb);font-size:1rem;font-weight:700;padding:.7rem .6rem;
+  border:2px solid var(--line);background:var(--card);color:var(--ink2);border-radius:4px;cursor:pointer}
+.tab:hover{border-color:var(--ink3);color:var(--ink)}
+.tab[data-v="def"][aria-pressed="true"]{background:var(--def);border-color:var(--def);color:#FFFFFF}
+.tab[data-v="run"][aria-pressed="true"]{background:var(--run);border-color:var(--run);color:#FFFFFF}
+
+.steps{list-style:none;margin:0;padding:.9rem 1.6rem 1rem;overflow:auto;border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:.5rem;counter-reset:st}
+.steps li{counter-increment:st;position:relative;
+  padding:.8rem 1rem .85rem 3.1rem;border-left:4px solid transparent;border-radius:0 4px 4px 0;
+  transition:opacity .35s ease,background .25s ease,border-color .25s ease,color .25s ease}
+.steps li::before{content:counter(st);position:absolute;left:.9rem;top:.85rem;
+  width:1.55rem;height:1.55rem;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--fd);font-weight:900;font-size:.82rem;background:var(--line);color:var(--ink2)}
+.steps li b{display:block;font-family:var(--fd);font-weight:900;font-size:1.22rem;line-height:1.3}
+.steps li p{margin:.3rem 0 0;font-size:.98rem;line-height:1.65;color:var(--ink2)}
+.steps li p em{font-style:normal;font-weight:700;color:var(--ink)}
+.steps li.future{opacity:0;visibility:hidden}
+.steps li.past{color:var(--ink3)}
+.steps li.past p,.steps li.past p em{color:var(--ink3)}
+.steps li.cur{background:var(--card)}
+aside[data-v="def"] .steps li.cur{border-left-color:var(--def)}
+aside[data-v="run"] .steps li.cur{border-left-color:var(--run)}
+aside[data-v="def"] .steps li.cur::before{background:var(--def);color:#FFFFFF}
+aside[data-v="run"] .steps li.cur::before{background:var(--run);color:#FFFFFF}
+
+.ctrl{display:flex;align-items:center;gap:.5rem;padding:1rem 1.6rem;border-top:1px solid var(--line);background:var(--bg2)}
+.ctrl .ct{font-family:var(--fd);font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink2);margin-right:auto;font-size:.92rem}
+.btn{font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.04em;
+  background:var(--card);color:var(--ink2);border:1px solid var(--line);
+  padding:.48rem .95rem;border-radius:2px;cursor:pointer;white-space:nowrap}
+.btn:hover{color:var(--ink);border-color:var(--ink3)}
+.btn.primary{background:var(--ink);color:#FFFFFF;border-color:var(--ink)}
+.btn.play{background:#C8553A!important;border-color:#C8553A!important;color:#FFFFFF!important}
+.btn:disabled{opacity:.4;cursor:default}
+
+#stage{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;padding:1rem 2rem 1.2rem;gap:.6rem}
+#svgbox{min-height:0;display:grid;place-items:center;position:relative}
+#svgbox.wait{cursor:pointer}
+svg#dia{height:100%;width:auto;max-width:100%;display:block}
+.cue{position:absolute;right:.6rem;bottom:.6rem;font-family:var(--fd);font-size:.82rem;font-weight:700;
+  background:#C8553A;color:#FFFFFF;border-radius:99px;padding:.35rem .9rem;opacity:0;pointer-events:none;
+  transition:opacity .3s ease}
+.cue.on{opacity:1;animation:cuePulse 1.6s ease-in-out infinite}
+@keyframes cuePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.cap{text-align:center;font-family:var(--fd);font-weight:900;font-size:1.6rem;line-height:1.35;
+  min-height:2.3em;display:grid;place-items:center;color:var(--ink);
+  opacity:0;transform:translateY(.35rem);transition:opacity .35s ease,transform .35s ease}
+.cap.in{opacity:1;transform:none}
+
+.sb{font-family:var(--fd);font-weight:800}
+.lbl{font-family:var(--fb);font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+.fx{transition:opacity .45s ease}
+
+@media (max-width:1000px){
+  body{overflow:auto}
+  #page{height:auto;min-height:100%}
+  main{grid-template-columns:minmax(0,1fr)}
+  aside{border-right:0;border-bottom:1px solid var(--line)}
+  #stage{min-height:70vh}
+  svg#dia{height:auto;width:100%}
+  .hkeys{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .steps li,.cap,.fx{transition:none}
+  .cue.on{animation:none}
+}
+
+.note{display:none;margin:.55rem 0 0;font-size:.85rem;line-height:1.6;color:#B4573C;
+  border-left:3px solid #B4573C;padding-left:.7rem;font-weight:500}
+#page.notes .note{display:block}
+.btn.on,.tg.on{background:#B4573C!important;border-color:#B4573C!important;color:#FFFFFF!important}
+</style>
+
+<div id="page">
+<header>
+  <div class="brand">
+    <small>板块五 · 单方面补充</small>
+    <b>只属于守备、只属于跑者的规矩</b>
+  </div>
+  <div class="hkeys"><kbd>→</kbd>播放 / 下一步<kbd>←</kbd>上一步<kbd>R</kbd>重播<kbd>Tab</kbd>切换</div>
+</header>
+
+<main>
+  <aside id="aside" data-v="def">
+    <div class="tabs">
+      <button class="tab" data-v="def" aria-pressed="true">守备独有</button>
+      <button class="tab" data-v="run" aria-pressed="false">跑者独有</button>
+    </div>
+    <ol class="steps" id="steps"></ol>
+    <div class="ctrl">
+      <span class="ct" id="ct"></span>
+      <button class="btn" id="bNote">讲解提示</button>
+      <button class="btn" id="bPrev">上一步</button>
+      <button class="btn" id="bReplay">重播</button>
+      <button class="btn primary" id="bNext">下一步</button>
+    </div>
+  </aside>
+
+  <div id="stage">
+    <div id="svgbox">
+      <svg id="dia" viewBox="0 0 640 610" role="img" aria-label="守备与跑者各自的规矩">
+        <path d="M320,560 L51.3,291.3 A380,380 0 0 1 588.7,291.3 Z" fill="#6DAA79"/>
+        <path d="M51.3,291.3 A380,380 0 0 1 588.7,291.3" fill="none" stroke="#1F5E36" stroke-width="3" stroke-dasharray="9 6"/>
+        <path d="M320,584 L484,420 L320,256 L156,420 Z" fill="#D39A74"/>
+        <path d="M320,560 L51.3,291.3 M320,560 L588.7,291.3" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+        <path d="M320,560 L460,420 L320,280 L180,420 Z" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+        <circle cx="320" cy="408" r="22" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+        <rect x="451" y="411" width="18" height="18" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 460 420)"/>
+        <rect x="462" y="422" width="18" height="18" fill="#DE7A26" stroke="#1A2119" stroke-width="1" transform="rotate(45 471 431)"/>
+        <rect x="311" y="271" width="18" height="18" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 320 280)"/>
+        <rect x="171" y="411" width="18" height="18" fill="#FFFFFF" stroke="#1A2119" stroke-width="1" transform="rotate(45 180 420)"/>
+        <path d="M311,550 h18 l0,9 l-9,10 l-9,-10 Z" fill="#FFFFFF" stroke="#1A2119" stroke-width="1.2"/>
+        <rect x="330" y="552" width="34" height="16" fill="#1A2119"/>
+        <text x="498" y="446" class="lbl" font-size="15">一垒</text>
+        <text x="320" y="252" class="lbl" font-size="15" text-anchor="middle">二垒</text>
+        <text x="148" y="432" class="lbl" font-size="15" text-anchor="end">三垒</text>
+
+        <g id="scoreLine" class="fx" opacity="0">
+          <line x1="278" y1="500" x2="318" y2="540" stroke="#DE7A26" stroke-width="4" stroke-dasharray="8 5"/>
+          <text x="250" y="498" class="lbl" font-size="15" fill="#DE7A26" text-anchor="end">得分线</text>
+        </g>
+        <g id="noteFirst" class="fx" opacity="0">
+          <line x1="452" y1="410" x2="432" y2="378" stroke="#1A2119" stroke-width="1.5"/>
+          <text x="428" y="372" class="lbl" font-size="15" text-anchor="end">守备踩界内白包</text>
+          <line x1="484" y1="444" x2="516" y2="474" stroke="#1A2119" stroke-width="1.5"/>
+          <text x="520" y="484" class="lbl" font-size="15">打者踩界外橙板</text>
+        </g>
+        <g id="noteHome" class="fx" opacity="0">
+          <line x1="366" y1="566" x2="404" y2="588" stroke="#1A2119" stroke-width="1.5"/>
+          <text x="410" y="596" class="lbl" font-size="15">封杀只能踩白板</text>
+        </g>
+        <g id="bubble" class="fx" opacity="0">
+          <rect x="0" y="0" width="86" height="34" rx="17" fill="#FFFFFF" stroke="#1A2119" stroke-width="2"/>
+          <text x="43" y="23" class="sb" font-size="16" fill="#1A2119" text-anchor="middle">我的</text>
+        </g>
+
+        <circle id="ring" cx="0" cy="0" r="12" fill="none" stroke="#D4E03A" stroke-width="4" opacity="0"/>
+        <g id="A" class="fx" opacity="0"><circle r="13" fill="#1F5E36" stroke="#FFFFFF" stroke-width="2.5"/></g>
+        <g id="B" class="fx" opacity="0"><circle r="13" fill="#1F5E36" stroke="#FFFFFF" stroke-width="2.5"/></g>
+        <g id="R" class="fx" opacity="0"><circle r="13" fill="#C8553A" stroke="#FFFFFF" stroke-width="2.5"/></g>
+        <g id="R2" class="fx" opacity="0"><circle r="13" fill="#C8553A" stroke="#FFFFFF" stroke-width="2.5"/></g>
+        <g id="ball" class="fx" opacity="0"><circle r="7" fill="#D4E03A" stroke="#5E6A00" stroke-width="1.5"/></g>
+        <g id="badge1" class="fx" opacity="0">
+          <rect x="-34" y="-16" width="68" height="32" rx="16" fill="#C4302B" stroke="#FFFFFF" stroke-width="2.5"/>
+          <text y="6" class="sb" font-size="16" fill="#FFFFFF" text-anchor="middle">出局</text>
+        </g>
+        <g id="badge2" class="fx" opacity="0">
+          <rect x="-34" y="-16" width="68" height="32" rx="16" fill="#2A62A8" stroke="#FFFFFF" stroke-width="2.5"/>
+          <text y="6" class="sb" font-size="16" fill="#FFFFFF" text-anchor="middle">安全</text>
+        </g>
+      </svg>
+      <div class="cue" id="cue">▶ 点一下继续</div>
+    </div>
+    <div class="cap" id="cap"></div>
+  </div>
+</main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SLOW=1.5;
+  function $(id){ return document.getElementById(id); }
+  var HOME=[300,556], B1=[460,420], B2=[320,280], B3=[180,420], HP=[320,556], EXT=[471,431], PITCH=[320,408];
+  var cap=$('cap'), ball=$('ball'), runId=0;
+
+  function place(el,x,y){ el._x=x; el._y=y; el.setAttribute('transform','translate('+x+','+y+')'); }
+  function show(el,on){ el.setAttribute('opacity', on?1:0); }
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, RM?0:ms*SLOW); }); }
+  function say(t){ cap.classList.remove('in'); void cap.offsetWidth; cap.textContent=t; cap.classList.add('in'); }
+  function tween(el,pts,dur,id){
+    return new Promise(function(res){
+      var last=pts[pts.length-1];
+      if(RM||!dur){ place(el,last[0],last[1]); res(); return; }
+      var path=[[el._x,el._y]].concat(pts), lens=[], tot=0;
+      for(var i=1;i<path.length;i++){ var d=Math.hypot(path[i][0]-path[i-1][0],path[i][1]-path[i-1][1]); lens.push(d); tot+=d; }
+      var t0=null;
+      function f(ts){
+        if(id!==runId){ res(); return; }
+        if(t0===null) t0=ts;
+        var k=Math.min(1,(ts-t0)/(dur*SLOW)), dist=k*tot, j=0;
+        while(j<lens.length-1 && dist>lens[j]){ dist-=lens[j]; j++; }
+        var a=path[j], b=path[j+1], u=lens[j]?Math.min(1,dist/lens[j]):1;
+        place(el,a[0]+(b[0]-a[0])*u,a[1]+(b[1]-a[1])*u);
+        if(k<1) requestAnimationFrame(f); else res();
+      }
+      requestAnimationFrame(f);
+    });
+  }
+  function arc(el,to,h,dur,id){
+    var x0=el._x,y0=el._y,x1=to[0],y1=to[1],cx=(x0+x1)/2,cy=Math.min(y0,y1)-h;
+    return new Promise(function(res){
+      if(RM){ place(el,x1,y1); res(); return; }
+      var t0=null;
+      function f(ts){
+        if(id!==runId){ res(); return; }
+        if(t0===null) t0=ts;
+        var k=Math.min(1,(ts-t0)/(dur*SLOW)), u=1-k;
+        place(el,u*u*x0+2*u*k*cx+k*k*x1,u*u*y0+2*u*k*cy+k*k*y1);
+        if(k<1) requestAnimationFrame(f); else res();
+      }
+      requestAnimationFrame(f);
+    });
+  }
+  function ringAt(p,id){
+    var r=$('ring'); r.setAttribute('cx',p[0]); r.setAttribute('cy',p[1]);
+    if(RM) return Promise.resolve();
+    return new Promise(function(res){
+      var t0=null;
+      function f(ts){
+        if(id!==runId){ r.setAttribute('opacity',0); res(); return; }
+        if(t0===null) t0=ts;
+        var k=Math.min(1,(ts-t0)/(650*SLOW));
+        r.setAttribute('r',12+22*k); r.setAttribute('opacity',1-k);
+        if(k<1) requestAnimationFrame(f); else res();
+      }
+      requestAnimationFrame(f);
+    });
+  }
+  function badge(n,p,text,color){
+    var b=$('badge'+n);
+    b.querySelector('text').textContent=text;
+    b.querySelector('rect').setAttribute('fill', color||'#C4302B');
+    place(b,p[0],p[1]); show(b,true);
+  }
+  function bubbleAt(p){ var b=$('bubble'); place(b,p[0],p[1]); show(b,true); }
+  function hit(id,to,dur){ show(ball,true); place(ball,HOME[0],HOME[1]-6); return tween(ball,[to],dur||650,id); }
+  function fly(id,to,h,dur){ show(ball,true); place(ball,HOME[0],HOME[1]-6); return arc(ball,to,h||220,dur||1600,id); }
+  function reset(o){
+    o=o||{};
+    [['A',o.A],['B',o.B],['R',o.R],['R2',o.R2]].forEach(function(p){
+      var el=$(p[0]);
+      if(p[1]){ place(el,p[1][0],p[1][1]); show(el,true); } else { show(el,false); }
+    });
+    if(o.ballAt){ place(ball,o.ballAt[0],o.ballAt[1]); show(ball,true); } else { place(ball,HOME[0],HOME[1]-6); show(ball,false); }
+    ['badge1','badge2','bubble','scoreLine','noteFirst','noteHome'].forEach(function(k){ show($(k),false); });
+    $('ring').setAttribute('opacity',0);
+  }
+
+  /* ---------- 守备独有 ---------- */
+  async function d1(id){
+    reset({A:[228,318], B:[368,300]});
+    say('两个人一起追同一个球');
+    await beat(id); if(id!==runId) return;
+    var pA=tween($('A'),[[286,262]],1400,id), pB=tween($('B'),[[316,268]],1400,id);
+    await fly(id,[300,252],240,1500); if(id!==runId) return;
+    await Promise.all([pA,pB]); if(id!==runId) return;
+    say('这样撞上去，两个人都可能受伤');
+    await beat(id); if(id!==runId) return;
+    bubbleAt([200,214]);
+    say('接的人先喊「我的」');
+    await beat(id); if(id!==runId) return;
+    await Promise.all([ tween($('A'),[[300,252]],450,id), tween($('B'),[[368,300]],600,id) ]); if(id!==runId) return;
+    ringAt([300,252],id); badge(1,[386,232],'出局');
+    say('另一个人让开。这是守备最重要的安全习惯');
+  }
+  async function d2(id){
+    reset({A:[320,300]});
+    say('什么才算接住');
+    await beat(id); if(id!==runId) return;
+    await fly(id,[320,300],230,1500); if(id!==runId) return;
+    ringAt([320,300],id); badge(1,[404,280],'出局');
+    say('落地前稳稳拿在手套里：打者出局');
+    await beat(id); if(id!==runId) return;
+    show($('badge1'),false);
+    await fly(id,[320,300],230,1400); if(id!==runId) return;
+    await tween(ball,[[338,338]],500,id); if(id!==runId) return;
+    badge(2,[416,336],'不算','#C4302B');
+    say('接住后又掉了，不算接住，比赛继续');
+  }
+  async function d4(id){
+    reset({A:[402,362], R:B1, ballAt:[250,300]});
+    say('守备没拿着球时，不能挡在跑垒路线上');
+    await beat(id); if(id!==runId) return;
+    await tween($('R'),[[386,346]],1200,id); if(id!==runId) return;
+    ringAt([394,354],id);
+    say('挡住了：判妨碍');
+    await beat(id); if(id!==runId) return;
+    await Promise.all([ tween($('A'),[[430,330]],500,id), tween($('R'),[B2],900,id) ]); if(id!==runId) return;
+    badge(2,[404,246],'安全','#2A62A8');
+    say('跑者直接判上垒，白送一个垒');
+    await beat(id); if(id!==runId) return;
+    show($('noteFirst'),true); show($('noteHome'),true);
+    say('还有两处踩垒位置：一垒踩界内白包，本垒封杀只能踩白板');
+  }
+
+  /* ---------- 跑者独有 ---------- */
+  async function u1(id){
+    reset({R:B1});
+    say('球被击中之前，脚不能离开垒包');
+    await beat(id); if(id!==runId) return;
+    await tween($('R'),[[404,364]],900,id); if(id!==runId) return;
+    ringAt([404,364],id); badge(1,[404,318],'出局');
+    say('提前离垒：判出局。慢投垒球不许偷垒');
+    await beat(id); if(id!==runId) return;
+    reset({R:B1});
+    say('等球棒响了再跑');
+    await hit(id,[250,330],700); if(id!==runId) return;
+    await tween($('R'),[B2],1100,id); if(id!==runId) return;
+    badge(2,[404,246],'安全','#2A62A8');
+    say('这样才安全');
+  }
+  async function u2(id){
+    reset({R:[404,364], A:[360,320], ballAt:[360,320]});
+    say('躲触杀时，不能偏离跑垒路线太远');
+    await beat(id); if(id!==runId) return;
+    await tween($('R'),[[430,300]],900,id); if(id!==runId) return;
+    ringAt([430,300],id); badge(1,[470,268],'出局');
+    say('偏出去大约一米就判出局');
+    await beat(id); if(id!==runId) return;
+    reset({R:[392,352], R2:[440,400]});
+    say('也不能超越前面的跑者');
+    await beat(id); if(id!==runId) return;
+    await tween($('R2'),[[368,328]],900,id); if(id!==runId) return;
+    ringAt([368,328],id); badge(1,[326,306],'出局');
+    say('超越的人出局。一个垒上也只能站一个人');
+  }
+  async function u3(id){
+    reset({R:[404,364], A:[268,272]});
+    say('跑垒时被界内球打到，判你出局');
+    await beat(id); if(id!==runId) return;
+    await hit(id,[404,364],700); if(id!==runId) return;
+    ringAt([404,364],id); badge(1,[404,318],'出局');
+    say('球打到身上：出局');
+    await beat(id); if(id!==runId) return;
+    say('所以看到球滚过来，要主动躲开，别去挡');
+  }
+  async function u4(id){
+    reset({R:HOME, R2:B3});
+    show($('noteFirst'),true);
+    say('冲一垒：踩界外一侧的橙色延长板');
+    await beat(id); if(id!==runId) return;
+    await tween($('R'),[EXT,[520,382]],1400,id); if(id!==runId) return;
+    badge(2,[556,344],'安全','#2A62A8');
+    say('冲过去不用停，只要不转身跑二垒');
+    await beat(id); if(id!==runId) return;
+    show($('scoreLine'),true);
+    say('回本垒：过了得分线就不能退回三垒');
+    await beat(id); if(id!==runId) return;
+    await tween($('R2'),[[276,502],HP],1300,id); if(id!==runId) return;
+    show($('noteHome'),true);
+    badge(1,[404,588],'得分','#2A62A8');
+    say('踩白板或黑垫都算得分，满垒保送挤回的分要踩白板');
+  }
+
+  /* ---------- 数据与控制 ---------- */
+  var VIEWS={
+    def:[
+      {t:'叫球', n:'1 分钟。让全队一起喊一次「我的」，喊出声比听懂更重要。', b:'两个人一起追同一个球，接的人先喊<em>「我的」</em>，另一个让开。这是守备最重要的安全习惯。', run:d1},
+      {t:'什么算接住', n:'1 分钟。强调掉了不算，别急着庆祝。', b:'球<em>落地前</em>稳稳拿在手套或手里，才算接住。接住后又掉了不算，比赛继续。', run:d2},
+      {t:'不能挡路，踩垒位置', n:'2 分钟。顺带把一垒和本垒踩哪块再强调一次。', b:'没拿着球时挡在跑垒路线上，判<em>妨碍</em>，跑者直接判上垒。另外：一垒踩<em>界内白包</em>，本垒封杀只能踩<em>白板</em>。', run:d4}
+    ],
+    run:[
+      {t:'离垒时机', n:'1 分钟。问他们：什么时候可以起跑？', b:'球被击中之前，<em>脚不能离开垒包</em>。慢投垒球不许偷垒，提前离垒判出局。', run:u1},
+      {t:'跑垒道与超越', n:'2 分钟。新人最容易犯超越那一条。', b:'躲触杀时偏离路线<em>约一米</em>就判出局；也<em>不能超越</em>前面的跑者，一个垒上只能站一个人。', run:u2},
+      {t:'被界内球打中', n:'1 分钟。要他们记住「躲」，不是「挡」。', b:'跑垒时被击出的界内球打到，<em>判你出局</em>。看到球滚过来要主动躲开，别去挡。', run:u3},
+      {t:'冲一垒、得分线、回本垒', n:'3 分钟。让他们复述一遍：橙板归谁、白板归谁。', b:'冲一垒踩<em>界外橙板</em>，冲过不用停；过了<em>得分线</em>不能退回三垒；回本垒踩白板或黑垫都算，满垒保送挤回的分要踩白板。', run:u4}
+    ]
+  };
+
+  var view='def', cur=0, lis=[], pending=null, done=false;
+  function steps(){ return VIEWS[view]; }
+  function beat(id){
+    return new Promise(function(res){
+      if(id!==runId){ res(); return; }
+      pending={res:res}; syncBtn();
+    });
+  }
+  function syncBtn(){
+    var b=$('bNext'), last=(cur===steps().length-1);
+    b.classList.toggle('play', !!pending);
+    if(pending){ b.textContent='▶ 播放'; b.disabled=false; }
+    else if(done){ b.textContent='下一步'; b.disabled=last; }
+    else { b.textContent='播放中…'; b.disabled=true; }
+    $('cue').classList.toggle('on', !!pending);
+    $('svgbox').classList.toggle('wait', !!pending);
+  }
+  function next(){
+    if(pending){ var p=pending; pending=null; syncBtn(); p.res(); }
+    else if(done && cur<steps().length-1){ go(cur+1); }
+  }
+  function build(){
+    var ol=$('steps'); ol.innerHTML='';
+    steps().forEach(function(st,i){
+      var li=document.createElement('li');
+      li.innerHTML='<b>'+st.t+'</b><p>'+st.b+'</p>'+(st.n?'<p class="note">'+st.n+'</p>':'');
+      li.addEventListener('click',function(){ if(i<=cur) go(i); });
+      ol.appendChild(li);
+    });
+    lis=Array.prototype.slice.call(ol.children);
+  }
+  function setView(v){
+    view=v;
+    $('aside').setAttribute('data-v',v);
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){ t.setAttribute('aria-pressed',String(t.dataset.v===v)); });
+    build(); go(0);
+  }
+  function go(n){
+    var list=steps();
+    cur=Math.max(0,Math.min(list.length-1,n));
+    lis.forEach(function(li,i){
+      li.classList.toggle('future', i>cur);
+      li.classList.toggle('past', i<cur);
+      li.classList.toggle('cur', i===cur);
+    });
+    lis[cur].scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});
+    $('ct').textContent=(cur+1)+' / '+list.length;
+    $('bPrev').disabled=(cur===0);
+    runId++; var id=runId;
+    if(pending){ var old=pending; pending=null; old.res(); }
+    done=false; syncBtn();
+    Promise.resolve(list[cur].run(id)).then(function(){ if(id===runId){ done=true; pending=null; syncBtn(); } });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(t){
+    t.addEventListener('click',function(){ setView(t.dataset.v); });
+  });
+  $('bNext').addEventListener('click',next);
+  $('bPrev').addEventListener('click',function(){ go(cur-1); });
+  $('bReplay').addEventListener('click',function(){ go(cur); });
+  $('svgbox').addEventListener('click',function(){ if(pending) next(); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+    else if(e.key==='r'||e.key==='R'){ go(cur); }
+    else if(e.key==='Tab'){ e.preventDefault(); setView(view==='def'?'run':'def'); }
+  });
+
+  var __np=$('page');
+  $('bNote').addEventListener('click',function(){
+    var on=__np.classList.toggle('notes');
+    this.classList.toggle('on', on);
+  });
+  setView('def');
+})();
+</script>

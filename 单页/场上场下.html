@@ -1,0 +1,388 @@
+<meta charset="utf-8">
+<title>规则课场上场下</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+
+<style>
+:root{
+  --bg:#F3F4EE; --bg2:#E8EBE1; --card:#FFFFFF;
+  --ink:#1A2119; --ink2:#4B564A; --ink3:#7A8477; --line:#CBD1C1;
+  --turf-deep:#1F5E36; --clay:#B4573C; --out:#C4302B;
+  --fd:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  --fb:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  font-size:clamp(13px, 0.52vw + 0.78vh, 19px);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2.5px solid var(--clay);outline-offset:2px}
+
+#page{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%}
+header{display:flex;align-items:center;gap:1.4rem;padding:1.1rem 2.2rem;
+  border-bottom:1px solid var(--line);background:var(--card)}
+.brand{display:grid;gap:.15rem;margin-right:auto}
+.brand b{font-family:var(--fd);font-weight:900;font-size:1.3rem;letter-spacing:-.01em}
+.brand small{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.2em;color:var(--clay)}
+.hkeys{font-family:var(--fd);font-size:.74rem;color:var(--ink3);letter-spacing:.04em}
+.hkeys kbd{font-family:var(--fd);font-size:.72rem;border:1px solid var(--line);border-radius:3px;
+  padding:.05rem .38rem;background:var(--bg);color:var(--ink2);margin:0 .2rem}
+
+main{display:grid;grid-template-columns:30rem minmax(0,1fr);min-height:0}
+aside{border-right:1px solid var(--line);background:var(--bg2);min-height:0;
+  display:grid;grid-template-rows:minmax(0,1fr) auto}
+.steps{list-style:none;margin:0;padding:1.6rem 1.6rem 1rem;overflow:auto;
+  display:flex;flex-direction:column;gap:.55rem;counter-reset:st}
+.steps li{counter-increment:st;position:relative;
+  padding:.85rem 1rem .9rem 3.1rem;border-left:4px solid transparent;border-radius:0 4px 4px 0;
+  transition:opacity .35s ease,background .25s ease,border-color .25s ease,color .25s ease}
+.steps li::before{content:counter(st);position:absolute;left:.9rem;top:.9rem;
+  width:1.55rem;height:1.55rem;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--fd);font-weight:900;font-size:.82rem;background:var(--line);color:var(--ink2)}
+.steps li b{display:block;font-family:var(--fd);font-weight:900;font-size:1.3rem;line-height:1.3;letter-spacing:-.01em}
+.steps li p{margin:.35rem 0 0;font-size:1rem;line-height:1.65;color:var(--ink2)}
+.steps li p em{font-style:normal;font-weight:700;color:var(--ink)}
+.steps li.future{opacity:0;visibility:hidden}
+.steps li.past{color:var(--ink3)}
+.steps li.past p,.steps li.past p em{color:var(--ink3)}
+.steps li.cur{background:var(--card);border-left-color:var(--turf-deep)}
+.steps li.cur::before{background:var(--turf-deep);color:#FFFFFF}
+
+.ctrl{display:flex;align-items:center;gap:.5rem;padding:1rem 1.6rem;border-top:1px solid var(--line);background:var(--bg2)}
+.ctrl .ct{font-family:var(--fd);font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink2);margin-right:auto;font-size:.92rem}
+.btn{font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.04em;
+  background:var(--card);color:var(--ink2);border:1px solid var(--line);
+  padding:.48rem .95rem;border-radius:2px;cursor:pointer;white-space:nowrap}
+.btn:hover{color:var(--ink);border-color:var(--ink3)}
+.btn.primary{background:var(--turf-deep);color:#FFFFFF;border-color:var(--turf-deep)}
+.btn.play{background:#C8553A!important;border-color:#C8553A!important;color:#FFFFFF!important}
+.btn:disabled{opacity:.4;cursor:default}
+
+#stage{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;padding:1rem 2rem 1.2rem;gap:.6rem}
+#svgbox{min-height:0;display:grid;place-items:center;position:relative}
+#svgbox.wait{cursor:pointer}
+svg#dia{height:100%;width:auto;max-width:100%;display:block}
+.cue{position:absolute;right:.6rem;bottom:.6rem;font-family:var(--fd);font-size:.82rem;font-weight:700;
+  background:#C8553A;color:#FFFFFF;border-radius:99px;padding:.35rem .9rem;opacity:0;pointer-events:none;
+  transition:opacity .3s ease}
+.cue.on{opacity:1;animation:cuePulse 1.6s ease-in-out infinite}
+@keyframes cuePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.cap{text-align:center;font-family:var(--fd);font-weight:900;font-size:1.65rem;line-height:1.35;
+  min-height:2.3em;display:grid;place-items:center;color:var(--ink);
+  opacity:0;transform:translateY(.35rem);transition:opacity .35s ease,transform .35s ease}
+.cap.in{opacity:1;transform:none}
+
+.sb{font-family:var(--fd);font-weight:800}
+.lbl{font-family:var(--fb);font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+.fx{transition:opacity .45s ease}
+
+@media (max-width:1000px){
+  body{overflow:auto}
+  #page{height:auto;min-height:100%}
+  main{grid-template-columns:minmax(0,1fr)}
+  aside{border-right:0;border-bottom:1px solid var(--line)}
+  #stage{min-height:70vh}
+  svg#dia{height:auto;width:100%}
+  .hkeys{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .steps li,.cap,.fx{transition:none}
+  .cue.on{animation:none}
+}
+
+.note{display:none;margin:.55rem 0 0;font-size:.85rem;line-height:1.6;color:#B4573C;
+  border-left:3px solid #B4573C;padding-left:.7rem;font-weight:500}
+#page.notes .note{display:block}
+.btn.on,.tg.on{background:#B4573C!important;border-color:#B4573C!important;color:#FFFFFF!important}
+</style>
+
+<div id="page">
+<header>
+  <div class="brand">
+    <small>板块六 · 场上场下</small>
+    <b>手势、死球、我们联赛的规则</b>
+  </div>
+  <div class="hkeys"><kbd>→</kbd>播放 / 下一步<kbd>←</kbd>上一步<kbd>R</kbd>重播</div>
+</header>
+
+<main>
+  <aside>
+    <ol class="steps" id="steps">
+      <li>
+        <b>五个裁判手势</b>
+        <p>球场很吵，判罚基本靠看。<em>好球、出局、安全、界外、界内</em>，认得这五个就够用。<em>界内不出声</em>，只用手指方向，所以打完球别等着听。</p>
+        <p class="note">3 分钟。最后让全体起立，五个手势各做一遍。</p>
+      </li>
+      <li>
+        <b>听到死球就停</b>
+        <p>界外球、球飞出场外、裁判喊暂停，都是<em>死球</em>。听到就站住，等裁判指示，别继续跑，也别趁机多跑一个垒。</p>
+        <p class="note">2 分钟。强调站住不动，别趁乱多跑一个垒。</p>
+      </li>
+      <li>
+        <b>我们联赛的规则</b>
+        <p>和通用规则不一样的地方都在这里。第一场之前，<em>把这几条记住</em>。</p>
+        <p class="note">4 分钟。配合速查卡讲，讲完把速查卡发到群里。</p>
+      </li>
+    </ol>
+    <div class="ctrl">
+      <span class="ct" id="ct">1 / 3</span>
+      <button class="btn" id="bNote">讲解提示</button>
+      <button class="btn" id="bPrev">上一步</button>
+      <button class="btn" id="bReplay">重播</button>
+      <button class="btn primary" id="bNext">下一步</button>
+    </div>
+  </aside>
+
+  <div id="stage">
+    <div id="svgbox">
+      <svg id="dia" viewBox="0 0 640 610" role="img" aria-label="裁判手势、死球、本队联赛规则">
+
+        <!-- 一：手势 -->
+        <g id="g1" class="fx" opacity="0">
+          <g id="sg0" class="fx" opacity="0">
+            <circle cx="90" cy="250" r="13" fill="#4B564A"/>
+            <line x1="90" y1="264" x2="90" y2="330" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="90" y1="282" x2="62" y2="304" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <path d="M90,280 L120,266 L128,284" stroke="#C4302B" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="84" y1="330" x2="72" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="96" y1="330" x2="108" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <text x="90" y="418" class="lbl" font-size="19" text-anchor="middle">好球</text>
+          </g>
+          <g id="sg1" class="fx" opacity="0">
+            <circle cx="210" cy="250" r="13" fill="#4B564A"/>
+            <line x1="210" y1="264" x2="210" y2="330" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="210" y1="284" x2="182" y2="300" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="210" y1="278" x2="238" y2="236" stroke="#C4302B" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="242" cy="228" r="10" fill="#C4302B"/>
+            <line x1="204" y1="330" x2="192" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="216" y1="330" x2="228" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <text x="210" y="418" class="lbl" font-size="19" text-anchor="middle">出局</text>
+          </g>
+          <g id="sg2" class="fx" opacity="0">
+            <circle cx="330" cy="250" r="13" fill="#4B564A"/>
+            <line x1="330" y1="264" x2="330" y2="330" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="330" y1="282" x2="272" y2="282" stroke="#1F5E36" stroke-width="8" stroke-linecap="round"/>
+            <line x1="330" y1="282" x2="388" y2="282" stroke="#1F5E36" stroke-width="8" stroke-linecap="round"/>
+            <line x1="324" y1="330" x2="312" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="336" y1="330" x2="348" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <text x="330" y="418" class="lbl" font-size="19" text-anchor="middle">安全</text>
+          </g>
+          <g id="sg3" class="fx" opacity="0">
+            <circle cx="450" cy="250" r="13" fill="#4B564A"/>
+            <line x1="450" y1="264" x2="450" y2="330" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="450" y1="280" x2="418" y2="222" stroke="#DE7A26" stroke-width="8" stroke-linecap="round"/>
+            <line x1="450" y1="280" x2="482" y2="222" stroke="#DE7A26" stroke-width="8" stroke-linecap="round"/>
+            <line x1="444" y1="330" x2="432" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="456" y1="330" x2="468" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <text x="450" y="418" class="lbl" font-size="19" text-anchor="middle">界外</text>
+          </g>
+          <g id="sg4" class="fx" opacity="0">
+            <circle cx="570" cy="250" r="13" fill="#4B564A"/>
+            <line x1="570" y1="264" x2="570" y2="330" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="570" y1="284" x2="598" y2="300" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="570" y1="286" x2="528" y2="312" stroke="#1F5E36" stroke-width="8" stroke-linecap="round"/>
+            <circle cx="522" cy="316" r="9" fill="#1F5E36"/>
+            <line x1="564" y1="330" x2="552" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line x1="576" y1="330" x2="588" y2="382" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <text x="570" y="418" class="lbl" font-size="19" text-anchor="middle">界内</text>
+          </g>
+          <g id="sgNote" class="fx" opacity="0">
+            <text x="320" y="480" class="lbl" font-size="18" text-anchor="middle" fill="#C4302B">界内不出声，只用手指</text>
+            <text x="320" y="512" class="lbl" font-size="18" text-anchor="middle">打完球别等着听，没听到喊就是界内，跑就对了</text>
+          </g>
+        </g>
+
+        <!-- 二：死球 -->
+        <g id="g2" class="fx" opacity="0">
+          <path d="M320,520 L86,286 A331,331 0 0 1 554,286 Z" fill="#6DAA79"/>
+          <path d="M320,544 L464,400 L320,256 L176,400 Z" fill="#D39A74"/>
+          <path d="M320,520 L440,400 L320,280 L200,400 Z" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+          <path d="M311,510 h18 l0,9 l-9,10 l-9,-10 Z" fill="#FFFFFF" stroke="#1A2119" stroke-width="1.2"/>
+          <circle cx="320" cy="380" r="11" fill="#1F5E36" stroke="#FFFFFF" stroke-width="2.5"/>
+          <circle cx="400" cy="330" r="11" fill="#1F5E36" stroke="#FFFFFF" stroke-width="2.5"/>
+          <circle cx="240" cy="330" r="11" fill="#1F5E36" stroke="#FFFFFF" stroke-width="2.5"/>
+          <circle cx="440" cy="400" r="12" fill="#C8553A" stroke="#FFFFFF" stroke-width="2.5"/>
+          <g id="ump">
+            <circle cx="214" cy="522" r="13" fill="#4B564A"/>
+            <line x1="214" y1="536" x2="214" y2="578" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line id="umpA" x1="214" y1="550" x2="186" y2="566" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <line id="umpB" x1="214" y1="550" x2="242" y2="566" stroke="#4B564A" stroke-width="8" stroke-linecap="round"/>
+            <text x="214" y="602" class="lbl" font-size="15" text-anchor="middle">裁判</text>
+          </g>
+          <g id="deadBadge" class="fx" opacity="0">
+            <rect x="386" y="470" width="120" height="44" rx="22" fill="#C4302B" stroke="#FFFFFF" stroke-width="3"/>
+            <text x="446" y="499" class="sb" font-size="21" fill="#FFFFFF" text-anchor="middle">死球</text>
+          </g>
+          <g id="dead1" class="fx" opacity="0"><text x="60" y="96" class="lbl" font-size="18">界外球</text></g>
+          <g id="dead2" class="fx" opacity="0"><text x="60" y="134" class="lbl" font-size="18">球飞出场外、滚进器材区</text></g>
+          <g id="dead3" class="fx" opacity="0"><text x="60" y="172" class="lbl" font-size="18">裁判喊暂停：受伤、争议、换人</text></g>
+          <g id="dead4" class="fx" opacity="0"><text x="60" y="216" class="lbl" font-size="18" fill="#C4302B">听到就站住，等裁判指示</text></g>
+        </g>
+
+        <!-- 三：联赛规则 -->
+        <g id="g3" class="fx" opacity="0">
+          <rect x="40" y="40" width="560" height="520" rx="8" fill="#1A2119"/>
+          <text x="70" y="78" class="sb" font-size="14" fill="#D4E03A">我们联赛的规则</text>
+          <g id="r1g" class="fx" opacity="0">
+            <text x="70" y="126" class="sb" font-size="17" fill="#E8C547">人员与打序</text>
+            <text x="70" y="158" class="sb" font-size="15" fill="#E8EBE1">守备 10 人，场上任一性别不少于 4 人</text>
+            <text x="70" y="186" class="sb" font-size="15" fill="#E8EBE1">打序不要求男女交替，全场不变</text>
+            <text x="70" y="214" class="sb" font-size="15" fill="#E8EBE1">可加一名 EP，只打击不守备</text>
+          </g>
+          <g id="r2g" class="fx" opacity="0">
+            <text x="70" y="262" class="sb" font-size="17" fill="#E8C547">球数与投球</text>
+            <text x="70" y="294" class="sb" font-size="15" fill="#E8EBE1">每个打者上场就是一好一坏</text>
+            <text x="70" y="322" class="sb" font-size="15" fill="#E8EBE1">三个好球三振，四个坏球保送</text>
+            <text x="70" y="350" class="sb" font-size="15" fill="#E8EBE1">两好球后打界外，直接出局</text>
+            <text x="70" y="378" class="sb" font-size="15" fill="#E8EBE1">弧线最高点高于 1.83 m、低于 5 m</text>
+          </g>
+          <g id="r3g" class="fx" opacity="0">
+            <text x="70" y="426" class="sb" font-size="17" fill="#E8C547">跑垒与得分</text>
+            <text x="70" y="458" class="sb" font-size="15" fill="#E8EBE1">球被击中后才能离垒，不许偷垒</text>
+            <text x="70" y="486" class="sb" font-size="15" fill="#E8EBE1">一垒有延长板：守备踩界内，打者踩界外</text>
+            <text x="70" y="514" class="sb" font-size="15" fill="#E8EBE1">得分线距本垒约 3 m，过线不能回头</text>
+            <text x="70" y="542" class="sb" font-size="15" fill="#E8EBE1">回本垒踩白板或黑垫都算，禁止滑垒</text>
+          </g>
+          <g id="r4g" class="fx" opacity="0">
+            <rect x="330" y="96" width="250" height="150" rx="6" fill="#242C22"/>
+            <text x="352" y="128" class="sb" font-size="17" fill="#E8C547">比赛</text>
+            <text x="352" y="158" class="sb" font-size="15" fill="#E8EBE1">限时 1 小时，最多 7 局</text>
+            <text x="352" y="186" class="sb" font-size="15" fill="#E8EBE1">剩不到 10 分钟不开新局</text>
+            <text x="352" y="214" class="sb" font-size="15" fill="#E8EBE1">平局就是平局，全垒打不限</text>
+          </g>
+        </g>
+      </svg>
+      <div class="cue" id="cue">▶ 点一下继续</div>
+    </div>
+    <div class="cap" id="cap"></div>
+  </div>
+</main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function $(id){ return document.getElementById(id); }
+  var cap=$('cap'), runId=0;
+  function show(el,on){ el.setAttribute('opacity', on?1:0); }
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, RM?0:ms); }); }
+  function say(t){ cap.classList.remove('in'); void cap.offsetWidth; cap.textContent=t; cap.classList.add('in'); }
+  function stage(n){
+    [1,2,3].forEach(function(k){ show($('g'+k), k===n); });
+    ['sg0','sg1','sg2','sg3','sg4','sgNote','deadBadge','dead1','dead2','dead3','dead4','r1g','r2g','r3g','r4g'].forEach(function(k){ show($(k),false); });
+    $('umpA').setAttribute('x2',186); $('umpA').setAttribute('y2',566);
+    $('umpB').setAttribute('x2',242); $('umpB').setAttribute('y2',566);
+  }
+  function raiseArms(){
+    $('umpA').setAttribute('x2',176); $('umpA').setAttribute('y2',498);
+    $('umpB').setAttribute('x2',252); $('umpB').setAttribute('y2',498);
+  }
+
+  async function s1(id){
+    stage(1);
+    say('球场很吵，判罚靠看手势');
+    await beat(id); if(id!==runId) return;
+    show($('sg0'),true); say('好球：右手握拳向侧上方顶出');
+    await beat(id); if(id!==runId) return;
+    show($('sg1'),true); say('出局：握拳向上猛挥一下');
+    await beat(id); if(id!==runId) return;
+    show($('sg2'),true); say('安全：双臂向两侧平展');
+    await beat(id); if(id!==runId) return;
+    show($('sg3'),true); say('界外：双臂高举，同时喊出声');
+    await beat(id); if(id!==runId) return;
+    show($('sg4'),true); say('界内：手指向界内，不喊话');
+    await beat(id); if(id!==runId) return;
+    show($('sgNote'),true);
+    say('大家跟着做一遍，五个手势各一次');
+  }
+
+  async function s2(id){
+    stage(2);
+    say('比赛进行中');
+    await beat(id); if(id!==runId) return;
+    raiseArms(); show($('deadBadge'),true);
+    say('裁判双手举起：死球');
+    await beat(id); if(id!==runId) return;
+    show($('dead1'),true); await sleep(200);
+    show($('dead2'),true); await sleep(200);
+    show($('dead3'),true);
+    say('常见的三种：界外球、球飞出场外、裁判喊暂停');
+    await beat(id); if(id!==runId) return;
+    show($('dead4'),true);
+    say('听到就站住，等裁判指示，别继续跑');
+  }
+
+  async function s3(id){
+    stage(3);
+    say('最后过一遍我们联赛的规则');
+    await beat(id); if(id!==runId) return;
+    show($('r1g'),true); say('人员与打序');
+    await beat(id); if(id!==runId) return;
+    show($('r4g'),true); say('比赛：限时一小时，最多七局');
+    await beat(id); if(id!==runId) return;
+    show($('r2g'),true); say('球数与投球：上场就是一好一坏');
+    await beat(id); if(id!==runId) return;
+    show($('r3g'),true); say('跑垒与得分：击中球才能离垒，禁止滑垒');
+    await beat(id); if(id!==runId) return;
+    say('这几条和别的联赛不一样，记住它们');
+  }
+
+  /* 点一下播一段 */
+  var STEPS=[s1,s2,s3];
+  var lis=Array.prototype.slice.call(document.querySelectorAll('#steps li'));
+  var cur=0, pending=null, done=false;
+  function beat(id){
+    return new Promise(function(res){
+      if(id!==runId){ res(); return; }
+      pending={res:res}; syncBtn();
+    });
+  }
+  function syncBtn(){
+    var b=$('bNext'), last=(cur===STEPS.length-1);
+    b.classList.toggle('play', !!pending);
+    if(pending){ b.textContent='▶ 播放'; b.disabled=false; }
+    else if(done){ b.textContent='下一步'; b.disabled=last; }
+    else { b.textContent='播放中…'; b.disabled=true; }
+    $('cue').classList.toggle('on', !!pending);
+    $('svgbox').classList.toggle('wait', !!pending);
+  }
+  function next(){
+    if(pending){ var p=pending; pending=null; syncBtn(); p.res(); }
+    else if(done && cur<STEPS.length-1){ go(cur+1); }
+  }
+  function go(n){
+    cur=Math.max(0,Math.min(STEPS.length-1,n));
+    lis.forEach(function(li,i){
+      li.classList.toggle('future', i>cur);
+      li.classList.toggle('past', i<cur);
+      li.classList.toggle('cur', i===cur);
+    });
+    lis[cur].scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});
+    $('ct').textContent=(cur+1)+' / '+STEPS.length;
+    $('bPrev').disabled=(cur===0);
+    runId++; var id=runId;
+    if(pending){ var old=pending; pending=null; old.res(); }
+    done=false; syncBtn();
+    Promise.resolve(STEPS[cur](id)).then(function(){ if(id===runId){ done=true; pending=null; syncBtn(); } });
+  }
+  $('bNext').addEventListener('click',next);
+  $('bPrev').addEventListener('click',function(){ go(cur-1); });
+  $('bReplay').addEventListener('click',function(){ go(cur); });
+  $('svgbox').addEventListener('click',function(){ if(pending) next(); });
+  lis.forEach(function(li,i){ li.addEventListener('click',function(){ if(i<=cur) go(i); }); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+    else if(e.key==='r'||e.key==='R'){ go(cur); }
+  });
+
+  var __np=$('page');
+  $('bNote').addEventListener('click',function(){
+    var on=__np.classList.toggle('notes');
+    this.classList.toggle('on', on);
+  });
+  go(0);
+})();
+</script>

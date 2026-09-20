@@ -1,0 +1,388 @@
+<meta charset="utf-8">
+<title>规则课收尾</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+
+<style>
+:root{
+  --bg:#F3F4EE; --bg2:#E8EBE1; --card:#FFFFFF;
+  --ink:#1A2119; --ink2:#4B564A; --ink3:#7A8477; --line:#CBD1C1;
+  --turf-deep:#1F5E36; --clay:#B4573C; --run:#C8553A; --out:#C4302B;
+  --fd:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  --fb:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  font-size:clamp(13px, 0.52vw + 0.78vh, 19px);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2.5px solid var(--clay);outline-offset:2px}
+
+#page{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%}
+header{display:flex;align-items:center;gap:1.4rem;padding:1.1rem 2.2rem;
+  border-bottom:1px solid var(--line);background:var(--card)}
+.brand{display:grid;gap:.15rem;margin-right:auto}
+.brand b{font-family:var(--fd);font-weight:900;font-size:1.3rem;letter-spacing:-.01em}
+.brand small{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.2em;color:var(--clay)}
+.hkeys{font-family:var(--fd);font-size:.74rem;color:var(--ink3);letter-spacing:.04em}
+.hkeys kbd{font-family:var(--fd);font-size:.72rem;border:1px solid var(--line);border-radius:3px;
+  padding:.05rem .38rem;background:var(--bg);color:var(--ink2);margin:0 .2rem}
+
+main{display:grid;grid-template-columns:30rem minmax(0,1fr);min-height:0}
+aside{border-right:1px solid var(--line);background:var(--bg2);min-height:0;
+  display:grid;grid-template-rows:minmax(0,1fr) auto}
+.steps{list-style:none;margin:0;padding:1.6rem 1.6rem 1rem;overflow:auto;
+  display:flex;flex-direction:column;gap:.55rem;counter-reset:st}
+.steps li{counter-increment:st;position:relative;
+  padding:.85rem 1rem .9rem 3.1rem;border-left:4px solid transparent;border-radius:0 4px 4px 0;
+  transition:opacity .35s ease,background .25s ease,border-color .25s ease,color .25s ease}
+.steps li::before{content:counter(st);position:absolute;left:.9rem;top:.9rem;
+  width:1.55rem;height:1.55rem;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--fd);font-weight:900;font-size:.82rem;background:var(--line);color:var(--ink2)}
+.steps li b{display:block;font-family:var(--fd);font-weight:900;font-size:1.3rem;line-height:1.3;letter-spacing:-.01em}
+.steps li p{margin:.35rem 0 0;font-size:1rem;line-height:1.65;color:var(--ink2)}
+.steps li p em{font-style:normal;font-weight:700;color:var(--ink)}
+.steps li.future{opacity:0;visibility:hidden}
+.steps li.past{color:var(--ink3)}
+.steps li.past p,.steps li.past p em{color:var(--ink3)}
+.steps li.cur{background:var(--card);border-left-color:var(--turf-deep)}
+.steps li.cur::before{background:var(--turf-deep);color:#FFFFFF}
+
+.ctrl{display:flex;align-items:center;gap:.5rem;padding:1rem 1.6rem;border-top:1px solid var(--line);background:var(--bg2)}
+.ctrl .ct{font-family:var(--fd);font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink2);margin-right:auto;font-size:.92rem}
+.btn{font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.04em;
+  background:var(--card);color:var(--ink2);border:1px solid var(--line);
+  padding:.48rem .95rem;border-radius:2px;cursor:pointer;white-space:nowrap}
+.btn:hover{color:var(--ink);border-color:var(--ink3)}
+.btn.primary{background:var(--turf-deep);color:#FFFFFF;border-color:var(--turf-deep)}
+.btn.play{background:#C8553A!important;border-color:#C8553A!important;color:#FFFFFF!important}
+.btn:disabled{opacity:.4;cursor:default}
+
+#stage{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;padding:1rem 2rem 1.2rem;gap:.6rem}
+#svgbox{min-height:0;display:grid;place-items:center;position:relative}
+#svgbox.wait{cursor:pointer}
+svg#dia{height:100%;width:auto;max-width:100%;display:block}
+.cue{position:absolute;right:.6rem;bottom:.6rem;font-family:var(--fd);font-size:.82rem;font-weight:700;
+  background:#C8553A;color:#FFFFFF;border-radius:99px;padding:.35rem .9rem;opacity:0;pointer-events:none;
+  transition:opacity .3s ease}
+.cue.on{opacity:1;animation:cuePulse 1.6s ease-in-out infinite}
+@keyframes cuePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.cap{text-align:center;font-family:var(--fd);font-weight:900;font-size:1.65rem;line-height:1.35;
+  min-height:2.3em;display:grid;place-items:center;color:var(--ink);
+  opacity:0;transform:translateY(.35rem);transition:opacity .35s ease,transform .35s ease}
+.cap.in{opacity:1;transform:none}
+
+.sb{font-family:var(--fd);font-weight:800}
+.lbl{font-family:var(--fb);font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+.fx{transition:opacity .45s ease}
+
+@media (max-width:1000px){
+  body{overflow:auto}
+  #page{height:auto;min-height:100%}
+  main{grid-template-columns:minmax(0,1fr)}
+  aside{border-right:0;border-bottom:1px solid var(--line)}
+  #stage{min-height:70vh}
+  svg#dia{height:auto;width:100%}
+  .hkeys{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .steps li,.cap,.fx{transition:none}
+  .cue.on{animation:none}
+}
+
+.note{display:none;margin:.55rem 0 0;font-size:.85rem;line-height:1.6;color:#B4573C;
+  border-left:3px solid #B4573C;padding-left:.7rem;font-weight:500}
+#page.notes .note{display:block}
+.btn.on,.tg.on{background:#B4573C!important;border-color:#B4573C!important;color:#FFFFFF!important}
+</style>
+
+<div id="page">
+<header>
+  <div class="brand">
+    <small>收尾 · 下场前三件事</small>
+    <b>今天就讲到这里</b>
+  </div>
+  <div class="hkeys"><kbd>→</kbd>播放 / 下一步<kbd>←</kbd>上一步<kbd>R</kbd>重播</div>
+</header>
+
+<main>
+  <aside>
+    <ol class="steps" id="steps">
+      <li>
+        <b>知道自己第几棒</b>
+        <p>打序赛前排好，<em>全场不变</em>。记住自己的号，也记住<em>前面那个人是谁</em>，他一上场你就准备。轮错了要判出局。</p>
+        <p class="note">2 分钟。现场点名，让每个人报出自己的棒次和前面是谁。</p>
+      </li>
+      <li>
+        <b>知道自己守哪个位置</b>
+        <p>上场前问清楚自己守哪里，记住<em>左右两边是谁</em>。两个人一起追球时，先喊「我的」的人接，另一个让开。</p>
+        <p class="note">2 分钟。现场把位置分下去，让他们记住左右两边是谁。</p>
+      </li>
+      <li>
+        <b>三条安全红线</b>
+        <p><em>不滑垒</em>、<em>不冲撞</em>、<em>不扔棒</em>。跑不到就减速停下，一个出局比一次受伤便宜得多。</p>
+        <p class="note">2 分钟。用这三条收尾，不要再讲新规则。</p>
+      </li>
+    </ol>
+    <div class="ctrl">
+      <span class="ct" id="ct">1 / 3</span>
+      <button class="btn" id="bNote">讲解提示</button>
+      <button class="btn" id="bPrev">上一步</button>
+      <button class="btn" id="bReplay">重播</button>
+      <button class="btn primary" id="bNext">下一步</button>
+    </div>
+  </aside>
+
+  <div id="stage">
+    <div id="svgbox">
+      <svg id="dia" viewBox="0 0 640 610" role="img" aria-label="下场前三件事：打序、守备位置、安全红线">
+
+        <!-- 一：打序 -->
+        <g id="g1" class="fx" opacity="0">
+          <rect x="70" y="40" width="500" height="470" rx="8" fill="#1A2119"/>
+          <text x="100" y="80" class="sb" font-size="15" fill="#D4E03A">今天的打序</text>
+          <g id="lineup"></g>
+          <g id="prevMark" class="fx" opacity="0">
+            <path d="M406,246 L470,246" stroke="#D4E03A" stroke-width="3"/>
+            <path d="M414,240 L404,246 L414,252 Z" fill="#D4E03A"/>
+            <text x="478" y="252" class="sb" font-size="15" fill="#D4E03A">他打完就轮到你</text>
+          </g>
+          <text x="100" y="548" class="lbl" font-size="16">打序全场不变，轮错了判出局</text>
+        </g>
+
+        <!-- 二：守备位置 -->
+        <g id="g2" class="fx" opacity="0">
+          <path d="M320,520 L86,286 A331,331 0 0 1 554,286 Z" fill="#6DAA79"/>
+          <path d="M86,286 A331,331 0 0 1 554,286" fill="none" stroke="#1F5E36" stroke-width="3" stroke-dasharray="9 6"/>
+          <path d="M320,544 L464,400 L320,256 L176,400 Z" fill="#D39A74"/>
+          <path d="M320,520 L440,400 L320,280 L200,400 Z" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+          <path d="M311,510 h18 l0,9 l-9,10 l-9,-10 Z" fill="#FFFFFF" stroke="#1A2119" stroke-width="1.2"/>
+          <g id="posts"></g>
+          <g id="callout" class="fx" opacity="0">
+            <text x="320" y="578" class="lbl" font-size="17" text-anchor="middle">两个人一起追球，先喊「我的」的人接</text>
+          </g>
+        </g>
+
+        <!-- 三：安全红线 -->
+        <g id="g3" class="fx" opacity="0">
+          <g id="w1" class="fx" opacity="0">
+            <rect x="40" y="150" width="170" height="230" rx="8" fill="#FFFFFF" stroke="#CBD1C1"/>
+            <g stroke="#C8553A" stroke-width="7" stroke-linecap="round" fill="none">
+              <line x1="90" y1="292" x2="152" y2="262"/>
+              <line x1="152" y1="262" x2="176" y2="246"/>
+              <line x1="112" y1="300" x2="84" y2="272"/>
+            </g>
+            <circle cx="176" cy="238" r="12" fill="#C8553A"/>
+            <line x1="70" y1="310" x2="184" y2="310" stroke="#B89A80" stroke-width="3"/>
+            <circle cx="125" cy="266" r="60" fill="none" stroke="#C4302B" stroke-width="7"/>
+            <line x1="82" y1="223" x2="168" y2="309" stroke="#C4302B" stroke-width="7"/>
+            <text x="125" y="356" class="lbl" font-size="20" text-anchor="middle" fill="#C4302B">不滑垒</text>
+          </g>
+          <g id="w2" class="fx" opacity="0">
+            <rect x="235" y="150" width="170" height="230" rx="8" fill="#FFFFFF" stroke="#CBD1C1"/>
+            <circle cx="292" cy="250" r="20" fill="#C8553A"/>
+            <circle cx="348" cy="250" r="20" fill="#1F5E36"/>
+            <g stroke="#C4302B" stroke-width="4" stroke-linecap="round">
+              <line x1="320" y1="214" x2="320" y2="200"/>
+              <line x1="304" y1="220" x2="296" y2="208"/>
+              <line x1="336" y1="220" x2="344" y2="208"/>
+            </g>
+            <circle cx="320" cy="266" r="60" fill="none" stroke="#C4302B" stroke-width="7"/>
+            <line x1="277" y1="223" x2="363" y2="309" stroke="#C4302B" stroke-width="7"/>
+            <text x="320" y="356" class="lbl" font-size="20" text-anchor="middle" fill="#C4302B">不冲撞</text>
+          </g>
+          <g id="w3" class="fx" opacity="0">
+            <rect x="430" y="150" width="170" height="230" rx="8" fill="#FFFFFF" stroke="#CBD1C1"/>
+            <line x1="474" y1="300" x2="536" y2="236" stroke="#8A5A2B" stroke-width="9" stroke-linecap="round"/>
+            <g stroke="#7A8477" stroke-width="3" stroke-linecap="round" fill="none">
+              <path d="M470,250 q16,-16 34,-20"/>
+              <path d="M486,224 q16,-12 32,-14"/>
+            </g>
+            <circle cx="515" cy="266" r="60" fill="none" stroke="#C4302B" stroke-width="7"/>
+            <line x1="472" y1="223" x2="558" y2="309" stroke="#C4302B" stroke-width="7"/>
+            <text x="515" y="356" class="lbl" font-size="20" text-anchor="middle" fill="#C4302B">不扔棒</text>
+          </g>
+          <g id="w4" class="fx" opacity="0">
+            <text x="320" y="440" class="lbl" font-size="19" text-anchor="middle" fill="#1F5E36">跑不到就减速停下</text>
+            <text x="320" y="474" class="lbl" font-size="19" text-anchor="middle" fill="#1F5E36">一个出局，比一次受伤便宜得多</text>
+          </g>
+        </g>
+      </svg>
+      <div class="cue" id="cue">▶ 点一下继续</div>
+    </div>
+    <div class="cap" id="cap"></div>
+  </div>
+</main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var NS='http://www.w3.org/2000/svg';
+  var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function $(id){ return document.getElementById(id); }
+  var cap=$('cap'), runId=0;
+
+  /* 打序表 */
+  var ORDER=['','','','','你','','','','','','EP 额外打者'];
+  var lu=$('lineup');
+  ORDER.forEach(function(name,i){
+    var y=110+i*38;
+    var g=document.createElementNS(NS,'g');
+    g.setAttribute('id','ln'+i); g.setAttribute('class','fx'); g.setAttribute('opacity','0');
+    var r=document.createElementNS(NS,'rect');
+    r.setAttribute('x',100); r.setAttribute('y',y-22); r.setAttribute('width',440); r.setAttribute('height',32);
+    r.setAttribute('rx',4); r.setAttribute('fill', i===4 ? '#C8553A' : '#242C22');
+    var n=document.createElementNS(NS,'text');
+    n.setAttribute('x',122); n.setAttribute('y',y); n.setAttribute('class','sb'); n.setAttribute('font-size',16);
+    n.setAttribute('fill', i===4 ? '#FFFFFF' : '#7A8477');
+    n.textContent='第 '+(i+1)+' 棒';
+    var t=document.createElementNS(NS,'text');
+    t.setAttribute('x',230); t.setAttribute('y',y); t.setAttribute('class','sb'); t.setAttribute('font-size',16);
+    t.setAttribute('fill', i===4 ? '#FFFFFF' : '#E8EBE1');
+    t.textContent=name || '　';
+    g.appendChild(r); g.appendChild(n); g.appendChild(t);
+    lu.appendChild(g);
+  });
+
+  /* 守备位置 */
+  var POS=[['投手',320,368],['捕手',320,552],['一垒手',452,372],['二垒手',368,268],['游击手',272,268],
+           ['三垒手',188,372],['左外野',176,238],['中外野',320,196],['右外野',464,238],['自由人',346,228]];
+  var ps=$('posts');
+  POS.forEach(function(p,i){
+    var g=document.createElementNS(NS,'g');
+    g.setAttribute('id','ps'+i); g.setAttribute('class','fx'); g.setAttribute('opacity','0');
+    var h=document.createElementNS(NS,'circle');
+    h.setAttribute('id','halo'+i); h.setAttribute('class','fx'); h.setAttribute('opacity','0');
+    h.setAttribute('cx',p[1]); h.setAttribute('cy',p[2]); h.setAttribute('r',21);
+    h.setAttribute('fill','none'); h.setAttribute('stroke','#D4E03A'); h.setAttribute('stroke-width','4');
+    var c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',p[1]); c.setAttribute('cy',p[2]); c.setAttribute('r',11);
+    c.setAttribute('fill','#1F5E36'); c.setAttribute('stroke','#FFFFFF'); c.setAttribute('stroke-width','2.5');
+    var t=document.createElementNS(NS,'text');
+    t.setAttribute('x',p[1]); t.setAttribute('y',p[2]+30); t.setAttribute('text-anchor','middle');
+    t.setAttribute('class','lbl'); t.setAttribute('font-size',14);
+    t.textContent=p[0];
+    g.appendChild(h); g.appendChild(c); g.appendChild(t);
+    ps.appendChild(g);
+  });
+
+  function show(el,on){ el.setAttribute('opacity', on?1:0); }
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, RM?0:ms); }); }
+  function say(t){ cap.classList.remove('in'); void cap.offsetWidth; cap.textContent=t; cap.classList.add('in'); }
+  function stage(n){
+    [1,2,3].forEach(function(k){ show($('g'+k), k===n); });
+    ORDER.forEach(function(_,i){ show($('ln'+i),false); });
+    POS.forEach(function(_,i){ show($('ps'+i),false); show($('halo'+i),false); });
+    ['prevMark','callout','w1','w2','w3','w4'].forEach(function(k){ show($(k),false); });
+  }
+
+  /* 三步 */
+  async function s1(id){
+    stage(1);
+    say('第一件事：知道自己第几棒');
+    await beat(id); if(id!==runId) return;
+    for(var i=0;i<ORDER.length;i++){
+      show($('ln'+i),true);
+      await sleep(110); if(id!==runId) return;
+    }
+    say('打序赛前排好，全场不变');
+    await beat(id); if(id!==runId) return;
+    show($('prevMark'),true);
+    say('记住你的号，也记住前面那个人');
+    await beat(id); if(id!==runId) return;
+    say('他一上场，你就去拿球棒准备');
+  }
+  async function s2(id){
+    stage(2);
+    say('第二件事：知道自己守哪个位置');
+    await beat(id); if(id!==runId) return;
+    for(var i=0;i<POS.length;i++){
+      show($('ps'+i),true);
+      await sleep(110); if(id!==runId) return;
+    }
+    say('上场前问清楚，别站错地方');
+    await beat(id); if(id!==runId) return;
+    show($('halo4'),true); show($('halo9'),true); show($('halo7'),true);
+    say('再记住左右两边是谁');
+    await beat(id); if(id!==runId) return;
+    show($('callout'),true);
+    say('两个人一起追球，先喊「我的」的人接，另一个让开');
+  }
+  async function s3(id){
+    stage(3);
+    say('第三件事：三条安全红线');
+    await beat(id); if(id!==runId) return;
+    show($('w1'),true);
+    say('不滑垒。我们联赛禁止滑垒');
+    await beat(id); if(id!==runId) return;
+    show($('w2'),true);
+    say('不冲撞。绕开防守，别撞上去');
+    await beat(id); if(id!==runId) return;
+    show($('w3'),true);
+    say('不扔棒。放下球棒再跑');
+    await beat(id); if(id!==runId) return;
+    show($('w4'),true);
+    say('跑不到就减速停下');
+    await beat(id); if(id!==runId) return;
+    say('规则今天讲完了，剩下的边打边学');
+  }
+
+  /* 点一下播一段 */
+  var STEPS=[s1,s2,s3];
+  var lis=Array.prototype.slice.call(document.querySelectorAll('#steps li'));
+  var cur=0, pending=null, done=false;
+  function beat(id){
+    return new Promise(function(res){
+      if(id!==runId){ res(); return; }
+      pending={res:res}; syncBtn();
+    });
+  }
+  function syncBtn(){
+    var b=$('bNext'), last=(cur===STEPS.length-1);
+    b.classList.toggle('play', !!pending);
+    if(pending){ b.textContent='▶ 播放'; b.disabled=false; }
+    else if(done){ b.textContent='下一步'; b.disabled=last; }
+    else { b.textContent='播放中…'; b.disabled=true; }
+    $('cue').classList.toggle('on', !!pending);
+    $('svgbox').classList.toggle('wait', !!pending);
+  }
+  function next(){
+    if(pending){ var p=pending; pending=null; syncBtn(); p.res(); }
+    else if(done && cur<STEPS.length-1){ go(cur+1); }
+  }
+  function go(n){
+    cur=Math.max(0,Math.min(STEPS.length-1,n));
+    lis.forEach(function(li,i){
+      li.classList.toggle('future', i>cur);
+      li.classList.toggle('past', i<cur);
+      li.classList.toggle('cur', i===cur);
+    });
+    lis[cur].scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});
+    $('ct').textContent=(cur+1)+' / '+STEPS.length;
+    $('bPrev').disabled=(cur===0);
+    runId++; var id=runId;
+    if(pending){ var old=pending; pending=null; old.res(); }
+    done=false; syncBtn();
+    Promise.resolve(STEPS[cur](id)).then(function(){ if(id===runId){ done=true; pending=null; syncBtn(); } });
+  }
+  $('bNext').addEventListener('click',next);
+  $('bPrev').addEventListener('click',function(){ go(cur-1); });
+  $('bReplay').addEventListener('click',function(){ go(cur); });
+  $('svgbox').addEventListener('click',function(){ if(pending) next(); });
+  lis.forEach(function(li,i){ li.addEventListener('click',function(){ if(i<=cur) go(i); }); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); go(cur-1); }
+    else if(e.key==='r'||e.key==='R'){ go(cur); }
+  });
+
+  var __np=$('page');
+  $('bNote').addEventListener('click',function(){
+    var on=__np.classList.toggle('notes');
+    this.classList.toggle('on', on);
+  });
+  go(0);
+})();
+</script>

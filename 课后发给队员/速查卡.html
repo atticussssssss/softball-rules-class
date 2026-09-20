@@ -1,0 +1,180 @@
+<meta charset="utf-8">
+<title>慢投垒球速查卡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+
+<style>
+:root{
+  --bg:#F3F4EE; --card:#FFFFFF; --ink:#1A2119; --ink2:#4B564A; --ink3:#7A8477;
+  --line:#CBD1C1; --turf:#1F5E36; --clay:#B4573C; --out:#C4302B; --ball:#B9C71F;
+  --fd:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  --fb:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);
+  -webkit-font-smoothing:antialiased;padding:1.4rem}
+.sheet{max-width:60rem;margin:0 auto;background:var(--card);border:1px solid var(--line);
+  border-radius:4px;padding:1.5rem 1.6rem 1.2rem}
+
+.top{display:flex;align-items:flex-end;gap:1rem;border-bottom:3px solid var(--ink);padding-bottom:.7rem}
+.top h1{font-family:var(--fd);font-weight:900;font-size:1.65rem;margin:0;letter-spacing:-.01em}
+.top small{font-family:var(--fd);font-size:.72rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--clay);display:block;margin-bottom:.15rem}
+.top .one{margin-left:auto;font-size:.92rem;color:var(--ink2);text-align:right;line-height:1.5;max-width:26rem}
+.top .one b{color:var(--ink)}
+#print{font-family:var(--fd);font-size:.76rem;font-weight:700;border:1px solid var(--line);
+  background:var(--bg);color:var(--ink2);border-radius:3px;padding:.35rem .8rem;cursor:pointer}
+#print:hover{border-color:var(--ink3);color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 1.4rem;margin-top:.9rem}
+section{break-inside:avoid;padding:.75rem 0;border-bottom:1px solid var(--line)}
+section:last-child{border-bottom:0}
+h2{font-family:var(--fd);font-weight:900;font-size:.95rem;margin:0 0 .4rem;display:flex;align-items:center;gap:.45rem}
+h2 i{font-style:normal;width:.55rem;height:.55rem;background:var(--turf);transform:rotate(45deg);display:inline-block}
+h2.hot i{background:var(--clay)}
+h2.warn i{background:var(--out)}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:.28rem}
+li{font-size:.86rem;line-height:1.5;color:var(--ink2);padding-left:.75rem;position:relative}
+li::before{content:"";position:absolute;left:0;top:.62em;width:.28rem;height:.28rem;border-radius:50%;background:var(--line)}
+li b{color:var(--ink)}
+li em{font-style:normal;color:var(--out);font-weight:700}
+.pos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.2rem .8rem}
+.pos div{font-size:.84rem;color:var(--ink2);display:flex;gap:.4rem}
+.pos b{font-family:var(--fd);color:var(--turf);width:1.1rem;text-align:right}
+.foot{margin-top:.8rem;border-top:1px solid var(--line);padding-top:.6rem;
+  font-size:.74rem;color:var(--ink3);display:flex;gap:1rem;flex-wrap:wrap;justify-content:space-between}
+
+@media (max-width:820px){ .grid{grid-template-columns:minmax(0,1fr)} body{padding:.8rem} }
+@media print{
+  @page{size:A4;margin:10mm}
+  body{background:#FFFFFF;padding:0}
+  .sheet{max-width:none;border:0;border-radius:0;padding:0}
+  #print{display:none}
+  section{padding:.5rem 0}
+  li{font-size:8.6pt;line-height:1.42}
+  h2{font-size:9.6pt}
+  .top h1{font-size:15pt}
+}
+</style>
+
+<div class="sheet">
+  <div class="top">
+    <div>
+      <small>慢投垒球 · 新队员</small>
+      <h1>一页速查卡</h1>
+    </div>
+    <div class="one">
+      把球打进场内，依次踩过一垒、二垒、三垒回到本垒，<b>得一分</b>。<br>
+      防守抓到<b>三个出局</b>就换边。按本队联赛规则整理。
+    </div>
+    <button id="print">打印</button>
+  </div>
+
+  <div class="grid">
+    <div>
+      <section>
+        <h2><i></i>球数</h2>
+        <ul>
+          <li>每个打者上场就是<b>一好一坏</b></li>
+          <li><b>三个好球</b>三振出局，<b>四个坏球</b>保送上一垒</li>
+          <li>两好球之后再打<em>界外球直接出局</em></li>
+          <li>球落在白色本垒板或黑色好球垫上，就是好球</li>
+        </ul>
+      </section>
+      <section>
+        <h2><i></i>投球</h2>
+        <ul>
+          <li>下手投，一只脚踩投手板</li>
+          <li>球的最高点<b>高于 1.83 m、低于 5 m</b></li>
+          <li>太平或太高都判坏球，打者不用挥棒</li>
+          <li>投球距离 15.24 m</li>
+        </ul>
+      </section>
+      <section>
+        <h2 class="warn"><i></i>击球时禁止</h2>
+        <ul>
+          <li><em>触击</em>：横棒轻碰让球滚出去</li>
+          <li><em>砍击</em>：往下砍让球弹高</li>
+          <li>击球瞬间<em>踩出击球区</em></li>
+          <li>以上三种，打者直接出局</li>
+        </ul>
+      </section>
+    </div>
+
+    <div>
+      <section>
+        <h2 class="hot"><i></i>跑垒</h2>
+        <ul>
+          <li><b>球被击中后</b>才能离垒，不许偷垒</li>
+          <li>冲一垒踩<b>界外一侧的延长板</b>，一垒手踩界内那块</li>
+          <li>冲过一垒可以不停，只要不转身跑二垒</li>
+          <li>飞球被接住要<b>回垒补踩</b>再跑</li>
+          <li>一个垒只站一人，不能超越前面的人</li>
+          <li><em>禁止滑垒</em></li>
+        </ul>
+      </section>
+      <section>
+        <h2 class="hot"><i></i>被迫、封杀、触杀</h2>
+        <ul>
+          <li>身后有人顶你，你就是<b>被迫的</b>，必须跑</li>
+          <li>被迫时，防守<b>踩垒</b>就出局，这叫封杀</li>
+          <li>不被迫时，防守必须<b>拿球碰到你</b>，这叫触杀</li>
+          <li>本垒封杀只能踩<b>白色本垒板</b></li>
+        </ul>
+      </section>
+      <section>
+        <h2 class="warn"><i></i>四种主要出局</h2>
+        <ul>
+          <li><b>三振</b>：三个好球</li>
+          <li><b>接杀</b>：球落地前被接住</li>
+          <li><b>封杀</b>：被迫前进，防守先踩到垒</li>
+          <li><b>触杀</b>：不在垒上，被拿球的人碰到</li>
+        </ul>
+      </section>
+    </div>
+
+    <div>
+      <section>
+        <h2><i></i>得分</h2>
+        <ul>
+          <li>依次踩过四个垒回到本垒，得一分</li>
+          <li>回本垒踩<b>白板或黑垫都算</b></li>
+          <li>满垒保送挤回来的分，<b>必须踩白板</b></li>
+          <li><b>得分线</b>距本垒约 3 m，过线后不能退回三垒</li>
+          <li>全垒打不限支数</li>
+        </ul>
+      </section>
+      <section>
+        <h2><i></i>比赛</h2>
+        <ul>
+          <li>防守 10 人，场上任一性别<b>不少于 4 人</b></li>
+          <li>打序不要求男女交替，可加一名 <b>EP</b> 只打击不守备</li>
+          <li>打序全场不变，<b>轮错判出局</b></li>
+          <li>限时 <b>1 小时</b>，最多 7 局</li>
+          <li>剩不到 10 分钟不开新局，平局就是平局</li>
+        </ul>
+      </section>
+      <section>
+        <h2><i></i>位置编号</h2>
+        <div class="pos">
+          <div><b>1</b>投手</div><div><b>2</b>捕手</div>
+          <div><b>3</b>一垒手</div><div><b>4</b>二垒手</div>
+          <div><b>5</b>三垒手</div><div><b>6</b>游击手</div>
+          <div><b>7</b>左外野</div><div><b>8</b>中外野</div>
+          <div><b>9</b>右外野</div><div><b>10</b>自由人</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span><b>下场前三件事</b>：知道自己第几棒 · 知道自己守哪个位置 · 不滑垒不冲撞不扔棒</span>
+    <span>听到裁判喊死球就停下 · 两人追同一个球，先喊「我的」的人接</span>
+    <span>规则以本赛季联赛规程为准</span>
+  </div>
+</div>
+
+<script>
+document.getElementById('print').addEventListener('click',function(){ window.print(); });
+</script>

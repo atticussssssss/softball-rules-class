@@ -1,0 +1,579 @@
+<meta charset="utf-8">
+<title>规则课打席</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
+
+<style>
+:root{
+  --bg:#F3F4EE; --bg2:#E8EBE1; --card:#FFFFFF;
+  --ink:#1A2119; --ink2:#4B564A; --ink3:#7A8477; --line:#CBD1C1;
+  --turf-deep:#1F5E36; --clay:#B4573C;
+  --t-strike:#9A6B00; --t-ball:#1F5E36; --t-out:#C4302B; --t-good:#2A62A8;
+  --fd:'Archivo','Noto Sans SC','PingFang SC','Microsoft YaHei','Segoe UI',sans-serif;
+  --fb:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  font-size:clamp(13px, 0.52vw + 0.78vh, 19px);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);
+  overflow:hidden;-webkit-font-smoothing:antialiased}
+:focus-visible{outline:2.5px solid var(--clay);outline-offset:2px}
+
+#page{display:grid;grid-template-rows:auto minmax(0,1fr);height:100%}
+
+header{
+  display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap;
+  padding:1.1rem 2.2rem;border-bottom:1px solid var(--line);background:var(--card)
+}
+.brand{display:grid;gap:.15rem;margin-right:auto}
+.brand b{font-family:var(--fd);font-weight:900;font-size:1.3rem;letter-spacing:-.01em}
+.brand small{font-family:var(--fd);font-size:.7rem;font-weight:700;letter-spacing:.2em;color:var(--clay)}
+.layers{display:flex;gap:.5rem;flex-wrap:wrap}
+.tg{
+  font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.05em;
+  background:var(--card);color:var(--ink2);border:1px solid var(--line);
+  padding:.45rem .9rem;border-radius:2px;cursor:pointer;white-space:nowrap
+}
+.tg:hover{color:var(--ink);border-color:var(--ink3)}
+.tg[aria-pressed="true"]{background:var(--turf-deep);color:#FFFFFF;border-color:var(--turf-deep)}
+
+main{display:grid;grid-template-columns:minmax(0,1fr) 27rem;min-height:0}
+
+#stage{min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;padding:1.2rem 2rem 1.2rem;gap:.6rem}
+#svgbox{min-height:0;display:grid;place-items:center}
+svg#side{width:100%;height:auto;max-height:100%;display:block}
+.cap{
+  text-align:center;font-family:var(--fd);font-weight:900;font-size:2.1rem;line-height:1.3;
+  min-height:1.6em;display:grid;place-items:center;color:var(--ink);
+  opacity:0;transform:translateY(.35rem);transition:opacity .35s ease,transform .35s ease
+}
+.cap.in{opacity:1;transform:none}
+.tone-strike{color:var(--t-strike)}
+.tone-ball{color:var(--t-ball)}
+.tone-out{color:var(--t-out)}
+.tone-good{color:var(--t-good)}
+
+aside{
+  border-left:1px solid var(--line);background:var(--bg2);overflow:auto;
+  padding:1.4rem 1.5rem 1.8rem;display:flex;flex-direction:column;gap:1.3rem
+}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--ink3);border-radius:0 4px 4px 0;padding:1rem 1.1rem 1.1rem}
+.card.tone-strike{border-left-color:var(--t-strike)}
+.card.tone-ball{border-left-color:var(--t-ball)}
+.card.tone-out{border-left-color:var(--t-out)}
+.card.tone-good{border-left-color:var(--t-good)}
+.card .tag{font-family:var(--fd);font-size:.68rem;font-weight:700;letter-spacing:.18em;color:var(--clay)}
+.card h2{font-family:var(--fd);font-weight:900;font-size:1.45rem;line-height:1.25;margin:.25rem 0 0;color:inherit}
+.card p{margin:.5rem 0 0;font-size:1rem;line-height:1.72;color:var(--ink2)}
+
+section h3{font-family:var(--fd);font-size:.72rem;font-weight:700;letter-spacing:.18em;color:var(--ink3);margin:0 0 .6rem}
+.btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+.btn{
+  font-family:var(--fb);font-size:.95rem;font-weight:700;text-align:left;
+  background:var(--card);color:var(--ink);border:1px solid var(--line);border-left:4px solid var(--ink3);
+  padding:.62rem .8rem;border-radius:0 3px 3px 0;cursor:pointer;line-height:1.35
+}
+.btn:hover{border-color:var(--ink3)}
+.btn small{display:block;font-weight:500;font-size:.78rem;color:var(--ink3);margin-top:.1rem}
+.btn.legal{border-left-color:var(--turf-deep)}
+.btn.bad{border-left-color:var(--t-out)}
+.btn.wide{grid-column:1 / -1}
+.note{font-size:.84rem;color:var(--ink3);line-height:1.6;margin:.6rem 0 0}
+.count{display:flex;align-items:center;gap:.8rem;background:var(--card);border:1px solid var(--line);border-radius:3px;padding:.6rem .8rem}
+.count b{font-family:var(--fd);font-weight:900;font-size:1.25rem;margin-right:auto}
+.count .btn{padding:.42rem .7rem;font-size:.86rem;border-left-width:1px;border-radius:3px}
+
+/* SVG */
+.lbl{font-family:var(--fb);font-weight:700;fill:var(--ink);paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+.lbl-s{font-family:var(--fb);font-weight:600;fill:var(--ink2);paint-order:stroke;stroke:#FFFFFF;stroke-width:3px;stroke-linejoin:round}
+.sb{font-family:var(--fd);font-weight:800}
+.fx{transition:opacity .4s ease}
+
+@media (max-width:1000px){
+  body{overflow:auto}
+  #page{height:auto;min-height:100%}
+  main{grid-template-columns:minmax(0,1fr)}
+  aside{border-left:0;border-top:1px solid var(--line)}
+  #stage{min-height:55vh}
+}
+@media (prefers-reduced-motion:reduce){
+  .cap,.fx{transition:none}
+}
+
+.note{display:none;margin:.55rem 0 0;font-size:.85rem;line-height:1.6;color:#B4573C;
+  border-left:3px solid #B4573C;padding-left:.7rem;font-weight:500}
+#page.notes .note{display:block}
+.btn.on,.tg.on{background:#B4573C!important;border-color:#B4573C!important;color:#FFFFFF!important}
+</style>
+
+<div id="page">
+<header>
+  <div class="brand">
+    <small>板块二 · 打者独有</small>
+    <b>打席：从投球到结果</b>
+  </div>
+  <div class="layers">
+    <button class="tg" id="tBoard" aria-pressed="false">球数板</button>
+    <button class="tg" id="tResult" aria-pressed="false">击球结果</button>
+    <button class="tg" id="bNote">讲解提示</button>
+    <button class="tg" id="tReset">回到初始</button>
+  </div>
+</header>
+
+<main>
+  <div id="stage">
+    <div id="svgbox">
+      <svg id="side" viewBox="0 0 1000 520" role="img" aria-label="侧视图：投手把球以弧线投向本垒，显示合法高度范围">
+        <!-- 地面 -->
+        <rect x="0" y="440" width="1000" height="80" fill="#E9DDCF"/>
+        <line x1="0" y1="440" x2="1000" y2="440" stroke="#B89A80" stroke-width="2"/>
+
+        <!-- 合法高度带 -->
+        <rect x="100" y="190" width="860" height="158.5" fill="#1F5E36" fill-opacity=".08"/>
+        <line x1="100" y1="190" x2="960" y2="190" stroke="#1F5E36" stroke-width="2" stroke-dasharray="9 6"/>
+        <line x1="100" y1="348.5" x2="960" y2="348.5" stroke="#1F5E36" stroke-width="2" stroke-dasharray="9 6"/>
+        <text x="92" y="196" class="lbl" font-size="17" fill="#1F5E36" text-anchor="end">5 m</text>
+        <text x="92" y="354" class="lbl" font-size="17" fill="#1F5E36" text-anchor="end">1.83 m</text>
+        <text x="116" y="218" class="lbl" font-size="16" fill="#1F5E36">球的最高点必须在这条带里</text>
+
+        <!-- 投手 -->
+        <rect x="112" y="436" width="36" height="5" fill="#FFFFFF" stroke="#1A2119" stroke-width="1"/>
+        <g stroke="#1F5E36" stroke-width="6" stroke-linecap="round" fill="none">
+          <line x1="130" y1="368" x2="128" y2="406"/>
+          <line x1="128" y1="406" x2="116" y2="438"/>
+          <line x1="128" y1="406" x2="142" y2="438"/>
+          <line x1="129" y1="380" x2="145" y2="398"/>
+        </g>
+        <circle cx="130" cy="358" r="9" fill="#1F5E36"/>
+        <text x="130" y="336" class="lbl-s" font-size="14" text-anchor="middle">下手投</text>
+
+        <!-- 本垒板与好球垫 -->
+        <rect x="892" y="437" width="44" height="4" fill="#1A2119"/>
+        <rect x="882" y="436" width="21" height="5" fill="#FFFFFF" stroke="#1A2119" stroke-width="1"/>
+
+        <!-- 击球区 -->
+        <g id="boxLine" stroke="#1A2119" stroke-width="2">
+          <line x1="850" y1="448" x2="935" y2="448"/>
+          <line x1="850" y1="443" x2="850" y2="453"/>
+          <line x1="935" y1="443" x2="935" y2="453"/>
+        </g>
+
+        <!-- 打者 -->
+        <g stroke="#C8553A" stroke-width="6" stroke-linecap="round" fill="none">
+          <line x1="892" y1="370" x2="894" y2="408"/>
+          <line id="legF" x1="894" y1="408" x2="878" y2="438"/>
+          <line x1="894" y1="408" x2="908" y2="438"/>
+          <line x1="891" y1="382" x2="878" y2="390"/>
+        </g>
+        <circle cx="892" cy="360" r="9" fill="#C8553A"/>
+        <g id="bat" transform="rotate(30 878 390)">
+          <line x1="878" y1="390" x2="878" y2="346" stroke="#8A5A2B" stroke-width="6" stroke-linecap="round"/>
+        </g>
+
+        <!-- 地面标注 -->
+        <text x="130" y="464" class="lbl-s" font-size="14" text-anchor="middle">一只脚踩投手板</text>
+        <text x="915" y="470" class="lbl-s" font-size="14" text-anchor="middle">本垒板 + 好球垫</text>
+        <line x1="146" y1="484" x2="882" y2="484" stroke="#7A8477" stroke-width="1.5"/>
+        <line x1="146" y1="478" x2="146" y2="490" stroke="#7A8477" stroke-width="1.5"/>
+        <line x1="882" y1="478" x2="882" y2="490" stroke="#7A8477" stroke-width="1.5"/>
+        <text x="514" y="506" class="lbl-s" font-size="15" text-anchor="middle">15.24 m</text>
+        <text x="988" y="506" class="lbl-s" font-size="14" text-anchor="end">击球区：双脚不能出线</text>
+
+        <!-- 从上往下看 -->
+        <g>
+          <rect x="770" y="16" width="214" height="154" rx="6" fill="#FFFFFF" stroke="#CBD1C1"/>
+          <text x="786" y="40" class="sb" font-size="13" fill="#4B564A">从上往下看</text>
+          <polygon points="850,50 932,50 932,122 850,122 850,106 870,86 850,66" fill="#1A2119"/>
+          <polygon points="830,66 850,66 870,86 850,106 830,106" fill="#FFFFFF" stroke="#1A2119" stroke-width="1.5"/>
+          <text x="836" y="142" class="sb" font-size="11" fill="#7A8477" text-anchor="middle">本垒板</text>
+          <text x="900" y="142" class="sb" font-size="11" fill="#7A8477" text-anchor="middle">好球垫</text>
+          <text x="786" y="162" class="sb" font-size="11" fill="#7A8477">← 投手方向</text>
+          <circle id="land" class="fx" cx="906" cy="86" r="7" fill="#D4E03A" stroke="#5E6A00" stroke-width="2" opacity="0"/>
+          <line id="landX1" class="fx" x1="0" y1="0" x2="0" y2="0" stroke="#C4302B" stroke-width="3" opacity="0"/>
+          <line id="landX2" class="fx" x1="0" y1="0" x2="0" y2="0" stroke="#C4302B" stroke-width="3" opacity="0"/>
+        </g>
+
+        <!-- 球数板 -->
+        <g id="board" class="fx" opacity="0">
+          <rect x="20" y="16" width="264" height="104" rx="6" fill="#1A2119"/>
+          <text x="40" y="58" class="sb" font-size="17" fill="#E8EBE1">好球</text>
+          <circle id="s1" cx="112" cy="52" r="11" fill="#3A4238"/>
+          <circle id="s2" cx="142" cy="52" r="11" fill="#3A4238"/>
+          <circle id="s3" cx="172" cy="52" r="11" fill="#3A4238"/>
+          <text x="40" y="98" class="sb" font-size="17" fill="#E8EBE1">坏球</text>
+          <circle id="b1" cx="112" cy="92" r="11" fill="#3A4238"/>
+          <circle id="b2" cx="142" cy="92" r="11" fill="#3A4238"/>
+          <circle id="b3" cx="172" cy="92" r="11" fill="#3A4238"/>
+          <circle id="b4" cx="202" cy="92" r="11" fill="#3A4238"/>
+          <g id="warn" class="fx" opacity="0">
+            <rect x="194" y="38" width="80" height="28" rx="4" fill="#C4302B"/>
+            <text x="234" y="57" class="sb" font-size="12" fill="#FFFFFF" text-anchor="middle">界外就出局</text>
+          </g>
+        </g>
+
+        <!-- 最高点标记 -->
+        <g id="apex" class="fx" opacity="0">
+          <line id="apexLine" x1="0" y1="0" x2="0" y2="440" stroke-width="2" stroke-dasharray="4 4"/>
+          <text id="apexTxt" x="0" y="0" class="lbl" font-size="16"></text>
+        </g>
+
+        <circle id="ball" cx="146" cy="398" r="8" fill="#D4E03A" stroke="#5E6A00" stroke-width="1.8" opacity="0"/>
+      </svg>
+    </div>
+    <div class="cap" id="cap"></div>
+  </div>
+
+  <aside>
+    <div class="card" id="card">
+      <div class="tag" id="cTag">规则</div>
+      <h2 id="cTitle">合法的一球</h2>
+      <p id="cBody"></p>
+    </div>
+
+    <section id="secCount" hidden>
+      <h3>球数</h3>
+      <div class="count">
+        <b id="countTxt">一好一坏</b>
+        <button class="btn" id="bNew">换下一位打者</button>
+      </div>
+    </section>
+
+    <section>
+      <h3>投一球</h3>
+      <div class="btns">
+        <button class="btn legal" data-p="on">合法<small>落在垫上</small></button>
+        <button class="btn legal" data-p="off">合法<small>没落在垫上</small></button>
+        <button class="btn bad" data-p="low">弧线太低<small>最高点不到 1.83 m</small></button>
+        <button class="btn bad" data-p="high">弧线太高<small>最高点超过 5 m</small></button>
+      </div>
+    </section>
+
+    <section id="secAct" hidden>
+      <h3>打者怎么做</h3>
+      <div class="btns">
+        <button class="btn" data-a="miss">挥棒落空</button>
+        <button class="btn" data-a="foul">打成界外</button>
+        <button class="btn legal" data-a="fair">打进界内</button>
+        <button class="btn" data-a="caught">被接杀</button>
+        <button class="btn bad" data-a="bunt">触击<small>禁止</small></button>
+        <button class="btn bad" data-a="chop">砍击<small>禁止</small></button>
+        <button class="btn bad wide" data-a="box">击球时踩出击球区</button>
+      </div>
+      <p class="note">这几种都是投一个合法、落在垫上的球，只看打者的做法。</p>
+    </section>
+    <p class="note">8 分钟。先只讲弧线，再打开球数板，最后打开击球结果。每一球先让他们猜判罚，再点按钮揭晓。</p>
+  </aside>
+</main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var SLOW=1.5;
+  function $(id){ return document.getElementById(id); }
+  var runId=0;
+
+  var GROUND=440, PXM=50;
+  var REL=[146,398], PIVOT=[878,390];
+  var ball=$('ball'), bat=$('bat'), legF=$('legF'), cap=$('cap');
+
+  var PITCH={
+    on:   {c:[520,142],  land:915, top:[905,86]},
+    long: {c:[540,142],  land:978, top:[958,86]},
+    short:{c:[500,150],  land:850, top:[814,86]},
+    side: {c:[520,142],  land:915, top:[905,36]},
+    low:  {c:[520,322],  land:915, top:[905,86]},
+    high: {c:[520,-118], land:915, top:[905,86]}
+  };
+
+  var DEFAULT_BODY='投手一只脚踩在投手板上，从下往上把球投出。球飞行时的最高点必须高于 1.83 米、低于 5 米。好球垫和本垒板贴在一起，球落在白色本垒板或黑色好球垫上，就是好球。打者击球时双脚要站在击球区里。';
+
+  /* ---------- 基础动画 ---------- */
+  function wait(ms){ return new Promise(function(r){ setTimeout(r, RM?0:ms*SLOW); }); }
+  function anim(dur,id,fn){
+    return new Promise(function(res){
+      if(RM){ fn(1); res(); return; }
+      var t0=null;
+      function f(ts){
+        if(id!==runId){ res(); return; }
+        if(t0===null) t0=ts;
+        var k=Math.min(1,(ts-t0)/(dur*SLOW));
+        fn(k);
+        if(k<1) requestAnimationFrame(f); else res();
+      }
+      requestAnimationFrame(f);
+    });
+  }
+  function qpt(p0,c,p1,t){ var u=1-t; return [u*u*p0[0]+2*u*t*c[0]+t*t*p1[0], u*u*p0[1]+2*u*t*c[1]+t*t*p1[1]]; }
+  function setBall(p){ ball.setAttribute('cx',p[0]); ball.setAttribute('cy',p[1]); }
+  function quad(p0,c,p1,dur,id,tEnd){
+    tEnd=tEnd||1;
+    return anim(dur,id,function(k){ setBall(qpt(p0,c,p1,k*tEnd)); });
+  }
+  function line(p0,p1,dur,id){
+    return anim(dur,id,function(k){ setBall([p0[0]+(p1[0]-p0[0])*k, p0[1]+(p1[1]-p0[1])*k]); });
+  }
+  var batA=30;
+  function setBat(a){ batA=a; bat.setAttribute('transform','rotate('+a+' '+PIVOT[0]+' '+PIVOT[1]+')'); }
+  function rotBat(to,dur,id){ var from=batA; return anim(dur,id,function(k){ setBat(from+(to-from)*k); }); }
+  function op(el,v){ el.setAttribute('opacity',v); }
+  function tAtX(p0,c,p1,x){
+    var lo=0, hi=1;
+    for(var i=0;i<40;i++){ var m=(lo+hi)/2; if(qpt(p0,c,p1,m)[0]<x) lo=m; else hi=m; }
+    return (lo+hi)/2;
+  }
+
+  /* ---------- 显示 ---------- */
+  function say(t,tone){
+    cap.classList.remove('in'); void cap.offsetWidth;
+    cap.className='cap'+(tone?' tone-'+tone:'');
+    cap.textContent=t;
+    requestAnimationFrame(function(){ cap.classList.add('in'); });
+  }
+  function explain(tag,title,body,tone){
+    $('cTag').textContent=tag; $('cTitle').textContent=title; $('cBody').textContent=body;
+    $('card').className='card'+(tone?' tone-'+tone:'');
+    $('cTitle').className=tone?'tone-'+tone:'';
+  }
+  function showApex(p0,c,p1){
+    var t=(p0[1]-c[1])/(p0[1]-2*c[1]+p1[1]);
+    var q=qpt(p0,c,p1,t), h=(GROUND-q[1])/PXM, legal=h>1.83 && h<5;
+    var col=legal?'#1F5E36':'#C4302B';
+    var ln=$('apexLine');
+    ln.setAttribute('x1',q[0]); ln.setAttribute('x2',q[0]); ln.setAttribute('y1',q[1]); ln.setAttribute('stroke',col);
+    var tx=$('apexTxt');
+    tx.setAttribute('x',q[0]+10); tx.setAttribute('y',q[1]-10); tx.setAttribute('fill',col);
+    tx.textContent='最高点 '+h.toFixed(1)+' m';
+    op($('apex'),1);
+    return h;
+  }
+  function showLand(pt,good){
+    var l=$('land'); l.setAttribute('cx',pt[0]); l.setAttribute('cy',pt[1]); op(l,1);
+    var x1=$('landX1'), x2=$('landX2');
+    if(good){ op(x1,0); op(x2,0); return; }
+    x1.setAttribute('x1',pt[0]-9); x1.setAttribute('y1',pt[1]-9); x1.setAttribute('x2',pt[0]+9); x1.setAttribute('y2',pt[1]+9);
+    x2.setAttribute('x1',pt[0]-9); x2.setAttribute('y1',pt[1]+9); x2.setAttribute('x2',pt[0]+9); x2.setAttribute('y2',pt[1]-9);
+    op(x1,1); op(x2,1);
+  }
+  function resetVisual(){
+    op(ball,0); setBall(REL); op($('apex'),0);
+    op($('land'),0); op($('landX1'),0); op($('landX2'),0);
+    setBat(30); legF.setAttribute('x2',878);
+    $('boxLine').setAttribute('stroke','#1A2119');
+  }
+
+  /* ---------- 球数 ---------- */
+  var S=1, B=1, over=false, boardOn=false, resultOn=false, offIdx=0;
+  var CN=['零','一','两','三','四'];
+  function paintBoard(){
+    for(var i=1;i<=3;i++) $('s'+i).setAttribute('fill', i<=Math.min(S,3) ? '#E8C547' : '#3A4238');
+    for(var j=1;j<=4;j++) $('b'+j).setAttribute('fill', j<=Math.min(B,4) ? '#5FBF7A' : '#3A4238');
+    op($('warn'), (boardOn && S===2 && !over) ? 1 : 0);
+    $('countTxt').textContent = over ? '这个打席结束了' : (CN[S]+'好'+CN[B]+'坏');
+  }
+  function newBatter(){ S=1; B=1; over=false; paintBoard(); }
+  function freshCheck(){ if(over){ newBatter(); return '新打者上场，一好一坏。'; } return ''; }
+
+  function callStrike(title,body,pre){
+    if(!boardOn){ say(title,'strike'); explain('判罚',title,body,'strike'); return; }
+    S++;
+    if(S>=3){
+      over=true; paintBoard();
+      say('三振出局','out');
+      explain('判罚','三振出局',pre+body+' 这是第三个好球，三振出局。别忘了打者上场时就已经带着第一个好球。','out');
+    } else {
+      paintBoard();
+      say(title,'strike');
+      explain('判罚',title,pre+body+(S===2?' 现在两个好球了，接下来再打界外就直接出局。':''),'strike');
+    }
+  }
+  function callBall(title,body,pre){
+    if(!boardOn){ say(title,'ball'); explain('判罚',title,body,'ball'); return; }
+    B++;
+    if(B>=4){
+      over=true; paintBoard();
+      say('保送 · 上一垒','good');
+      explain('判罚','保送',pre+body+' 这是第四个坏球，保送，打者走上一垒。别忘了打者上场时就已经带着第一个坏球。','good');
+    } else {
+      paintBoard();
+      say(title,'ball');
+      explain('判罚',title,pre+body,'ball');
+    }
+  }
+  function endOut(title,body,pre){
+    if(boardOn){ over=true; paintBoard(); }
+    say(title,'out'); explain('判罚',title,pre+body,'out');
+  }
+
+  /* ---------- 投球 ---------- */
+  async function doPitch(kind){
+    var id=++runId;
+    resetVisual();
+    var pre=boardOn?freshCheck():'';
+    var key=kind;
+    if(kind==='off'){ key=['long','short','side'][offIdx%3]; offIdx++; }
+    var P=PITCH[key], p1=[P.land,GROUND];
+    say('投手出手……');
+    op(ball,1);
+    await quad(REL,P.c,p1,2000,id); if(id!==runId) return;
+    var h=showApex(REL,P.c,p1);
+    var hs=h.toFixed(1);
+    if(kind==='on'){
+      showLand(P.top,true);
+      callStrike('好球','弧线合法，最高点 '+hs+' 米，球落在了好球垫上。打者不挥棒也算好球。',pre);
+    } else if(kind==='off'){
+      showLand(P.top,false);
+      var where={long:'落得太远，飞过了好球垫',short:'落得太近，还没到本垒板',side:'左右偏了，落在好球垫旁边'}[key];
+      callBall('坏球','弧线合法，但球'+where+'。没落在本垒板或好球垫上就是坏球。',pre);
+    } else if(kind==='low'){
+      showLand(P.top,false);
+      callBall('坏球 · 弧线太低','球的最高点只有 '+hs+' 米，没过 1.83 米。就算落在垫上也是坏球，打者不用挥棒。',pre);
+    } else {
+      showLand(P.top,false);
+      callBall('坏球 · 弧线太高','球的最高点到了 '+hs+' 米，超过了 5 米。就算落在垫上也是坏球。',pre);
+    }
+  }
+
+  /* ---------- 打者动作 ---------- */
+  async function doAct(act){
+    var id=++runId;
+    resetVisual();
+    var pre=boardOn?freshCheck():'';
+    var P=PITCH.on, p1=[P.land,GROUND];
+    var DUR=2000;
+    var tC=tAtX(REL,P.c,p1,840), C=qpt(REL,P.c,p1,tC);
+    say('投手出手……');
+    op(ball,1);
+
+    if(act==='miss'){
+      var sw=(async function(){ await wait(DUR*0.8-300); if(id!==runId) return; await rotBat(-90,300,id); await rotBat(-150,220,id); })();
+      await quad(REL,P.c,p1,DUR,id); if(id!==runId) return;
+      await sw; if(id!==runId) return;
+      showLand(P.top,true);
+      callStrike('好球 · 挥棒落空','挥了棒但没打到。只要挥棒落空，不管球落在哪里都算好球。',pre);
+      return;
+    }
+
+    if(act==='bunt'){
+      var hold=(async function(){ await wait(DUR*tC-900); if(id!==runId) return; await rotBat(-90,600,id); })();
+      await quad(REL,P.c,p1,DUR*tC,id,tC); if(id!==runId) return;
+      await hold; if(id!==runId) return;
+      await quad(C,[830,380],[800,GROUND],450,id); if(id!==runId) return;
+      await line([800,GROUND],[765,GROUND],400,id); if(id!==runId) return;
+      endOut('出局 · 触击','把球棒横着轻轻碰球，让球滚出去，叫触击。慢投垒球禁止触击，打者直接出局。',pre);
+      return;
+    }
+
+    if(act==='box'){
+      await wait(500); if(id!==runId) return;
+      await anim(450,id,function(k){ legF.setAttribute('x2',878-40*k); }); if(id!==runId) return;
+      $('boxLine').setAttribute('stroke','#C4302B');
+    }
+
+    var swing=(async function(){
+      var lead=(act==='chop')?220:280;
+      var startAt=DUR*tC-lead-(act==='box'?950:0);
+      await wait(Math.max(0,startAt)); if(id!==runId) return;
+      await rotBat(act==='chop'?-120:-90, lead, id);
+    })();
+    var pitchDur=(act==='box')?DUR*tC-950:DUR*tC;
+    await quad(REL,P.c,p1,Math.max(300,pitchDur),id,tC); if(id!==runId) return;
+    await swing; if(id!==runId) return;
+
+    if(act==='foul'){
+      rotBat(-150,220,id);
+      await quad(C,[930,200],[1020,110],800,id); if(id!==runId) return;
+      if(!boardOn){ say('界外球','strike'); explain('判罚','界外球','球打到了界外，算一个好球。',"strike"); return; }
+      if(S>=2){
+        endOut('出局 · 两好球后打界外','已经两个好球，再打界外直接出局。这是慢投垒球和棒球最不一样的一条。每个打者上场就带着一个好球，所以只要再吃一个好球，之后每个界外都会出局。',pre);
+      } else {
+        callStrike('界外球 · 算一个好球','球打到了界外，算一个好球。',pre);
+      }
+      return;
+    }
+    if(act==='fair'){
+      rotBat(-150,220,id);
+      await quad(C,[600,280],[320,GROUND],1100,id); if(id!==runId) return;
+      await line([320,GROUND],[230,GROUND],500,id); if(id!==runId) return;
+      if(boardOn){ over=true; paintBoard(); }
+      say('界内 · 放下球棒快跑','good');
+      explain('结果','界内球',pre+'球打进了界内，这个打席结束，打者变成跑者。马上把球棒放在地上，往一垒跑，不要扔棒。','good');
+      return;
+    }
+    if(act==='caught'){
+      rotBat(-150,220,id);
+      await quad(C,[620,-300],[420,-30],1300,id); if(id!==runId) return;
+      endOut('出局 · 接杀','球打得很高，外野手在球落地之前接住了。不管界内还是界外，落地前被接住都算出局。',pre);
+      return;
+    }
+    if(act==='chop'){
+      rotBat(-160,160,id);
+      await line(C,[822,GROUND],180,id); if(id!==runId) return;
+      await quad([822,GROUND],[770,150],[700,GROUND],900,id); if(id!==runId) return;
+      endOut('出局 · 砍击','把球棒往下砍，让球砸在地上高高弹起来，叫砍击。慢投垒球禁止砍击，必须完整挥棒。',pre);
+      return;
+    }
+    if(act==='box'){
+      rotBat(-150,220,id);
+      await quad(C,[600,280],[320,GROUND],1100,id); if(id!==runId) return;
+      endOut('出局 · 踩出击球区','击球那一刻，前脚已经踩到击球区外面了。就算球打得再好，也判打者出局。',pre);
+      return;
+    }
+  }
+
+  /* ---------- 图层与按钮 ---------- */
+  function setBoard(on){
+    boardOn=on; $('tBoard').setAttribute('aria-pressed',String(on));
+    op($('board'),on?1:0); $('secCount').hidden=!on;
+    runId++; resetVisual(); newBatter();
+    if(on){
+      say('三个好球三振，四个坏球保送');
+      explain('球数板','三好四坏，从一好一坏开始','和正式规则一样，三个好球三振出局，四个坏球保送上一垒。本队联赛不同的地方是：每个打者上场就已经算一个好球、一个坏球，所以板上一开始就各亮一盏。','strike');
+    }
+  }
+  function setResult(on){
+    resultOn=on; $('tResult').setAttribute('aria-pressed',String(on));
+    $('secAct').hidden=!on;
+    if(on){
+      runId++; resetVisual();
+      say('打者怎么做，结果不一样');
+      explain('击球结果','打者的做法','下面这些都是投一个合法、落在垫上的球，看打者不同的做法会有什么结果。触击、砍击、踩出击球区都是犯规，打者直接出局。','');
+    }
+  }
+  function resetAll(){
+    runId++; resetVisual();
+    boardOn=false; resultOn=false;
+    $('tBoard').setAttribute('aria-pressed','false'); $('tResult').setAttribute('aria-pressed','false');
+    op($('board'),0); $('secCount').hidden=true; $('secAct').hidden=true;
+    newBatter(); offIdx=0;
+    say('点右边的按钮，投一球');
+    explain('规则','合法的一球',DEFAULT_BODY,'');
+  }
+
+  $('tBoard').addEventListener('click',function(){ setBoard(!boardOn); });
+  $('tResult').addEventListener('click',function(){ setResult(!resultOn); });
+  $('tReset').addEventListener('click',resetAll);
+  $('bNew').addEventListener('click',function(){
+    runId++; resetVisual(); newBatter();
+    say('新打者上场：一好一坏');
+    explain('球数','换下一位打者','球数从一好一坏重新开始。','strike');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-p]'),function(b){
+    b.addEventListener('click',function(){ doPitch(b.dataset.p); });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-a]'),function(b){
+    b.addEventListener('click',function(){ doAct(b.dataset.a); });
+  });
+
+
+  var __np=$('page');
+  $('bNote').addEventListener('click',function(){
+    var on=__np.classList.toggle('notes');
+    this.classList.toggle('on', on);
+  });
+  resetAll();
+})();
+</script>
