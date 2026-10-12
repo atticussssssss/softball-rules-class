@@ -10,6 +10,7 @@ import os, zipfile
 ROOT = '慢投垒球规则课'
 ITEMS = [
     ('放映台.html',   '放映台.html'),
+    ('慢投垒球规则-给队员.html', '慢投垒球规则-给队员.html'),
     ('使用说明.txt',  '使用说明.txt'),
     ('规则课大纲.md', '规则课大纲.md'),
 ]
