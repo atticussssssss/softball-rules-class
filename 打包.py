@@ -31,7 +31,24 @@ for d in DIRS:
         z.write(os.path.join(d, fn), os.path.join(ROOT, d, fn)); n += 1
 z.close()
 
+# ---- 发群版：只装队员要看的，不含大纲、单页、放映台 ----
+SEND = '慢投垒球规则-发群.zip'
+SEND_ROOT = '慢投垒球规则'
+SEND_ITEMS = [
+    ('慢投垒球规则-给队员.html',     '慢投垒球规则.html'),
+    ('课后发给队员/速查卡.html',     '速查卡.html'),
+    ('怎么看.txt',                   '怎么看.txt'),
+]
+if os.path.exists(SEND):
+    os.remove(SEND)
+zs = zipfile.ZipFile(SEND, 'w', zipfile.ZIP_DEFLATED)
+for src, dst in SEND_ITEMS:
+    zs.write(src, os.path.join(SEND_ROOT, dst))
+zs.close()
+print('%s 已生成，%d 个文件，%.0f KB' % (SEND, len(SEND_ITEMS), os.path.getsize(SEND) / 1024.0))
+
 bad = [i.filename for i in zipfile.ZipFile(out).infolist() if not i.flag_bits & 0x800]
+bad += [i.filename for i in zipfile.ZipFile(SEND).infolist() if not i.flag_bits & 0x800]
 print('%s 已生成，%d 个文件，%.0f KB' % (out, n, os.path.getsize(out) / 1024.0))
 if bad:
     print('警告：以下条目缺 UTF-8 文件名标志：', bad)
